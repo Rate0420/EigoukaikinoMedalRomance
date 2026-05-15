@@ -344,7 +344,7 @@ GameObject:
   - component: {fileID: 1461429315}
   - component: {fileID: 1461429313}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: PushPlateMover
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -363,7 +363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveDirection: 2
-  _moveDistance: 5.86
+  _moveDistance: 5
   _offset: 0
   _moveSpeed: 1
   _minPointWaitingTime: 0.3
