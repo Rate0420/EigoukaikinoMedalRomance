@@ -363,7 +363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveDirection: 2
-  _moveDistance: 4.56
+  _moveDistance: 4.33
   _straightDistance: 0
   _moveSpeed: 1
   _minPointWaitingTime: 0.3
