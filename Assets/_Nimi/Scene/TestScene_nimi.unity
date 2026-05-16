@@ -1236,7 +1236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1094488756}
   m_Layer: 0
-  m_Name: MedalsOwnedText
+  m_Name: TargetMedalsOwnedText
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
