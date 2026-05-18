@@ -676,6 +676,63 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+<<<<<<< HEAD
+--- !u!1 &690719671
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 690719673}
+  - component: {fileID: 690719672}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &690719672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690719671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 946feaac6e76a2e46946d7c6c872b762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _medalPrefab: {fileID: 2764741081746486083, guid: 3cb9304156e295e458528324926f3f35, type: 3}
+  _iaunchTransform: {fileID: 690719673}
+  _iaunchOffset: {x: 0, y: 0, z: 0}
+  _iaunchRotation: {x: 0, y: 0, z: 0}
+  _iaunchMinPosition: {x: 0, y: 0, z: 0}
+  _iaunchMaxPosition: {x: 0, y: 0, z: 0}
+  _iaunchMinRotation: {x: 0, y: 0, z: 0}
+  _iaunchMaxRotation: {x: 0, y: 0, z: 0}
+  _launchForce: 100
+  _launchRotation: {x: 0, y: 0, z: 0}
+  _isShowGizmos: 1
+--- !u!4 &690719673
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690719671}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 45, z: -5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+=======
 --- !u!1001 &534753871
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1018,6 +1075,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10b09fe4a693abb44b3a4896223acb02, type: 3}
+>>>>>>> 904836a9d2b9aae5be1632bfafe3352dd20a5d54
 --- !u!1 &836372814
 GameObject:
   m_ObjectHideFlags: 0
@@ -3502,6 +3560,9 @@ SceneRoots:
   - {fileID: 1040004859}
   - {fileID: 1049694458}
   - {fileID: 1377033004}
+<<<<<<< HEAD
+  - {fileID: 690719673}
+=======
   - {fileID: 2144468491}
   - {fileID: 1171196914}
   - {fileID: 235160412}
@@ -3519,3 +3580,4 @@ SceneRoots:
   - {fileID: 839031377}
   - {fileID: 1036750794}
   - {fileID: 1460791585}
+>>>>>>> 904836a9d2b9aae5be1632bfafe3352dd20a5d54
