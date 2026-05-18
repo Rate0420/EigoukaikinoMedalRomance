@@ -13,7 +13,7 @@ namespace EMR.PushPlate
     }
 
     // PushPlateMoverで使用するユーティリティクラス
-    public static class MoveDirectionExtensions
+    public static class DirectionExtensions
     {
         public static Vector3 ToVector3(this MoveDirection direction)
         {
