@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 12, y: 12, z: 12}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2333044648358362102}
@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: bd5f1470ef5bb224d80aa7442ea1ea5b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -94,7 +94,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6725661431019780279}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: e4d0c542d0991d24290297e7b8b88f60, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -118,7 +118,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 288484816204719420, guid: 10b09fe4a693abb44b3a4896223acb02, type: 3}
       propertyPath: m_Name
-      value: CoinPrefab Variant
+      value: Ball
       objectReference: {fileID: 0}
     - target: {fileID: 288484816204719420, guid: 10b09fe4a693abb44b3a4896223acb02, type: 3}
       propertyPath: m_TagString
@@ -179,6 +179,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7412813153159805668, guid: 10b09fe4a693abb44b3a4896223acb02, type: 3}
+    - {fileID: 8703510697779367958, guid: 10b09fe4a693abb44b3a4896223acb02, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 8810589982362272467, guid: 10b09fe4a693abb44b3a4896223acb02, type: 3}
       insertIndex: -1
