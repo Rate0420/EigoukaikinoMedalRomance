@@ -1,6 +1,6 @@
 {
-    "name": "EMR.Utlilty",
-    "rootNamespace": "EMR.Utlilty",
+    "name": "EMR.Utility",
+    "rootNamespace": "EMR.Utility",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

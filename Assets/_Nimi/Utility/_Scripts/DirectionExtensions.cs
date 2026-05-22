@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace EMR.PushPlate
+namespace EMR.Utility
 {
     public enum MoveDirection
     {
