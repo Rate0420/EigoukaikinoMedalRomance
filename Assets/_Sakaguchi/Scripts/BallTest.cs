@@ -6,6 +6,7 @@ public class BallTest : MonoBehaviour
     public Vector3 startpos;
     public Quaternion startrot;
     public GameObject BallObject;
+    [SerializeField] float force = 300f;
     // ボールのList
     public List<GameObject> Balls = new List<GameObject>();
 
@@ -16,7 +17,7 @@ public class BallTest : MonoBehaviour
         {
             GameObject Ball = Instantiate(BallObject, startpos, startrot);
             Rigidbody newRb = Ball.GetComponent<Rigidbody>();
-            newRb.AddForce(Ball.transform.forward * 30, ForceMode.Impulse);
+            newRb.AddForce(Ball.transform.forward * force, ForceMode.Impulse);
             Balls.Add(Ball);
         }
 

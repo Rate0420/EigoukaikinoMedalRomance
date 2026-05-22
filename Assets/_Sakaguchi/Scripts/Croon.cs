@@ -3,31 +3,60 @@ using UnityEngine;
 public class Croon : MonoBehaviour
 {
     public float rps = 0.1f;
+    [SerializeField] float rotateTime;
+    [SerializeField] float stopTime;
     float timer;
+    [SerializeField] bool JPC;
+    [SerializeField] bool useTimer;
+    float t1, t2, t3, t4;
+    Rigidbody rigit;
+
+    void Start()
+    {
+        rigit = GetComponent<Rigidbody>();
+        t1 = rotateTime;
+        t2 = rotateTime + stopTime;
+        t3 = rotateTime + stopTime + rotateTime;
+        t4 = rotateTime + stopTime + rotateTime + stopTime;
+    }
+
     void Update()
     {
         timer += Time.deltaTime;
-        transform.Rotate(0, rps * Time.deltaTime * 360, 0);
-        // 5ïbâÒì]ÅA2ïbí‚é~ÅAãtâÒì]ÅA2ïbí‚é~ÇåJÇËï‘Ç∑
-        //if (timer < 5)
-        //{
-        //    transform.Rotate(0, rps * Time.deltaTime * 360, 0);
-        //}
-        //else if (timer < 7)
-        //{
-        //    // í‚é~
-        //}
-        //else if (timer < 12)
-        //{
-        //    transform.Rotate(0, -rps * Time.deltaTime * 360, 0);
-        //}
-        //else if (timer < 14)
-        //{
-        //    // í‚é~
-        //}
-        //else
-        //{
-        //    timer = 0;
-        //}
+
+        if (JPC)
+        {
+            rigit.MoveRotation(rigit.rotation * Quaternion.Euler(0, rps * Time.deltaTime * 360, 0));
+            return;
+        }
+
+
+        if (!useTimer)
+        {
+            rigit.MoveRotation(rigit.rotation * Quaternion.Euler(0, rps * Time.deltaTime * 360, 0));
+            return;
+        }
+        if (timer < t1)
+        {
+            // ê≥âÒì]
+            transform.Rotate(0, rps * Time.deltaTime * 360, 0);
+        }
+        else if (timer < t2)
+        {
+            // í‚é~
+        }
+        else if (timer < t3)
+        {
+            // ãtâÒì]
+            transform.Rotate(0, -rps * Time.deltaTime * 360, 0);
+        }
+        else if (timer < t4)
+        {
+            // í‚é~
+        }
+        else
+        {
+            timer = 0;
+        }
     }
 }
