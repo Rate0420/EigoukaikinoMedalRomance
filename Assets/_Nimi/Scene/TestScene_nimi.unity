@@ -3069,17 +3069,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 946feaac6e76a2e46946d7c6c872b762, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _medalPrefab: {fileID: 2764741081746486083, guid: 3cb9304156e295e458528324926f3f35, type: 3}
-  _inputCamera: {fileID: 560152566}
-  _launchTransform: {fileID: 1131147099}
-  _launchOffset: {x: 0, y: 0, z: 0}
-  _launchRotation: {x: 0, y: 0, z: 0}
-  _isFollowingRotation: 0
-  _launchDirection: 2
-  _launchForce: 30
-  _positionA: {x: -45, y: 0, z: 0}
-  _positionB: {x: 45, y: 0, z: 0}
-  _isDrawGizmos: 1
+  _medalRigidbodyPrefab: {fileID: 2764741081746486083, guid: 3cb9304156e295e458528324926f3f35, type: 3}
+  _mouseInputCamera: {fileID: 560152566}
+  _launchReferenceTransform: {fileID: 1131147099}
+  _launchLocalOffset: {x: 0, y: 0, z: 0}
+  _launchRotationOffset: {x: 0, y: 0, z: 0}
+  _launchMotionType: 2
+  _useLaunchRotationForDirection: 0
+  _baseLaunchDirection: 2
+  _launchImpulse: 10
+  _timeToLanding: 1
+  _flightProgressCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _flightHeightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.49499997
+      value: 0.9929245
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _flightHeight: 3
+  _restorePhysicsAfterCurve: 1
+  _launchRangeStartLocalPosition: {x: -45, y: 0, z: 0}
+  _launchRangeEndLocalPosition: {x: 45, y: 0, z: 0}
+  _mouseInputWorldOffset: {x: 0, y: 11, z: 75}
+  _mouseInputLeftWorldPosition: {x: -45, y: -0, z: -0}
+  _mouseInputRightWorldPosition: {x: 45, y: 0, z: 0}
+  _drawGizmos: 1
 --- !u!4 &1131147099
 Transform:
   m_ObjectHideFlags: 0
@@ -3089,10 +3153,11 @@ Transform:
   m_GameObject: {fileID: 1131147097}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 45, z: 0}
+  m_LocalPosition: {x: 0, y: 45, z: -35}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 1758290048}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1148820267
@@ -3725,6 +3790,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7974274554182029439, guid: 4b8eb7ef1956979468e74990acb6fbd2, type: 3}
   m_PrefabInstance: {fileID: 1720562323}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1758290047
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1758290048}
+  m_Layer: 0
+  m_Name: GameObject_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1758290048
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758290047}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -34, z: 109}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 1131147099}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1972621421
 GameObject:
   m_ObjectHideFlags: 0
