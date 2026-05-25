@@ -22,6 +22,15 @@ namespace EMR.PushPlate
         [SerializeField] private float _height = 0f;
 
 
+        private Rigidbody _rigidbody;
+
+        private Vector3 _startPosition;
+        private Vector3 _endPosition;
+
+        private float _t;
+        private int _direction = 1;
+
+
         /// <summary> 移動方向 </summary>
         public MoveDirection MoveDirection => _moveDirection;
 
@@ -31,14 +40,6 @@ namespace EMR.PushPlate
         /// <summary> 移動速度 </summary>
         public float MoveSpeed => _moveSpeed;
 
-
-        private Rigidbody _rigidbody;
-
-        private Vector3 _startPosition;
-        private Vector3 _endPosition;
-
-        private float _t;
-        private int _direction = 1;
 
         private void Awake()
         {
