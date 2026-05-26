@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace EMR.PushPlate
 {
+    // 移動関連の処理
     public partial class PushPlateMover
     {
         private void StartMoveLoop()
@@ -24,16 +25,18 @@ namespace EMR.PushPlate
 
                 if (_direction > 0)
                 {
-                    await MoveToAsync(1f, _maxPointWaitingTime, cancellationToken);
+                    await MoveToAsync(1f, cancellationToken);
+                    await WaitAtPointAsync(_minPointWaitingTime, cancellationToken);
                 }
                 else
                 {
-                    await MoveToAsync(0f, _minPointWaitingTime, cancellationToken);
+                    await MoveToAsync(0f, cancellationToken);
+                    await WaitAtPointAsync(_maxPointWaitingTime, cancellationToken);
                 }
             }
         }
 
-        private async UniTask MoveToAsync(float targetT, float waitTime, CancellationToken cancellationToken)
+        private async UniTask MoveToAsync(float targetT, CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -46,16 +49,13 @@ namespace EMR.PushPlate
                 float delta = (_moveSpeed / _moveDistance) * Time.fixedDeltaTime;
                 float nextT = _t + delta * _direction;
 
-                _t = _direction > 0
-                    ? Mathf.Min(nextT, targetT)
-                    : Mathf.Max(nextT, targetT);
+                _t = _direction > 0 ? Mathf.Min(nextT, targetT) : Mathf.Max(nextT, targetT);
 
                 MovePlatform();
 
                 if (Mathf.Approximately(_t, targetT))
                 {
                     _direction *= -1;
-                    await WaitAtPointAsync(waitTime, cancellationToken);
                     return;
                 }
 
@@ -63,11 +63,13 @@ namespace EMR.PushPlate
             }
         }
 
+
+        // 指定した時間だけ待機する
         private async UniTask WaitAtPointAsync(float waitTime, CancellationToken cancellationToken)
         {
-            if (waitTime <= 0f)
-                return;
+            if (waitTime <= 0f) return;
 
+            // 待機時間を経過させる
             await UniTask.Delay(
                 TimeSpan.FromSeconds(waitTime),
                 DelayType.DeltaTime,

@@ -1,7 +1,5 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
-using EMR.Utility;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -14,16 +12,12 @@ namespace EMR.Medal.Launch
     /// </summary>
     public class MedalIaunch : MonoBehaviour
     {
-        private enum LaunchMotionType
-        {
-            Impulse,
-            BallisticToLandingPoint,
-            CurveToLandingPoint
-        }
-
         [Header("メダルの設定")]
         [SerializeField, FormerlySerializedAs("_medalPrefab")]
         private Rigidbody _medalRigidbodyPrefab; // 発射するメダルのPrefab
+
+        [SerializeField]
+        private Transform _medalParentTransform; // 生成したメダルを子にするTransform
 
         [Header("入力の設定")]
         [SerializeField, FormerlySerializedAs("_inputCamera")]
@@ -37,40 +31,11 @@ namespace EMR.Medal.Launch
         private Vector3 _launchLocalOffset; // 発射位置のオフセット
 
         [SerializeField, FormerlySerializedAs("_launchRotation")]
-        private Vector3 _launchRotationOffset; // 発射位置・方向に加える回転
-
-        [Header("発射の設定")]
-        [SerializeField]
-        private LaunchMotionType _launchMotionType = LaunchMotionType.Impulse; // メダルの飛ばし方
-
-        [SerializeField, FormerlySerializedAs("_isFollowingRotation")]
-        private bool _useLaunchRotationForDirection = false; // 発射方向を回転に追尾させるか
-
-        [SerializeField, FormerlySerializedAs("_launchDirection")]
-        private MoveDirection _baseLaunchDirection = MoveDirection.PositiveZ; // 基準となる発射方向
-
-        [SerializeField, FormerlySerializedAs("_launchForce"), Min(0)]
-        private float _launchImpulse = 10f; // Impulse発射時の強さ
+        private Vector3 _launchRotationOffset; // 発射位置と生成時の向きに加える回転
 
         [Header("着地時間の設定")]
         [SerializeField, Min(0.01f)]
         private float _timeToLanding = 1f; // 着地するまでの時間
-
-        [Header("カーブ発射の設定")]
-        [SerializeField]
-        private AnimationCurve _flightProgressCurve = AnimationCurve.Linear(0f, 0f, 1f, 1f); // 着地点まで進む速さ
-
-        [SerializeField]
-        private AnimationCurve _flightHeightCurve = new AnimationCurve(
-            new Keyframe(0f, 0f),
-            new Keyframe(0.5f, 1f),
-            new Keyframe(1f, 0f)); // 飛行中の高さ
-
-        [SerializeField, Min(0f)]
-        private float _flightHeight = 3f; // カーブ発射時に上へ持ち上げる高さ
-
-        [SerializeField]
-        private bool _restorePhysicsAfterCurve = true; // カーブ移動後にRigidbodyの物理挙動へ戻すか
 
         [Header("発射位置の制限")]
         [SerializeField, FormerlySerializedAs("_positionA")]
@@ -96,6 +61,7 @@ namespace EMR.Medal.Launch
         private Vector3 _mouseScreenPosition = Vector3.zero; // 現在のマウススクリーン座標
         private Vector3 _currentLaunchPosition = Vector3.zero; // 実際にメダルを発射する位置
 
+
         private void Reset()
         {
             // コンポーネント追加時、自身のTransformを基準にする
@@ -113,12 +79,10 @@ namespace EMR.Medal.Launch
 
         private void Update()
         {
-            // 毎フレーム、マウス位置に応じた発射位置を更新する
-            UpdateCurrentLaunchPosition();
-
             // 左クリックでメダルを発射する
             if (Input.GetMouseButtonDown(0))
             {
+                UpdateCurrentLaunchPosition();
                 Launch();
             }
         }
@@ -135,39 +99,9 @@ namespace EMR.Medal.Launch
             }
 
             // 計算済みの発射位置と回転でメダルを生成する
-            var medal = Instantiate(_medalRigidbodyPrefab, _currentLaunchPosition, GetLaunchRotation());
+            var medal = Instantiate(_medalRigidbodyPrefab, _currentLaunchPosition, GetLaunchRotation(), _medalParentTransform);
 
-            ApplyLaunchMotion(medal);
-        }
-
-        /// <summary>
-        /// 設定された発射方式でメダルを飛ばす
-        /// </summary>
-        private void ApplyLaunchMotion(Rigidbody medal)
-        {
-            switch (_launchMotionType)
-            {
-                case LaunchMotionType.BallisticToLandingPoint:
-                    LaunchBallisticToLandingPoint(medal);
-                    break;
-
-                case LaunchMotionType.CurveToLandingPoint:
-                    StartCoroutine(LaunchAlongCurve(medal));
-                    break;
-
-                case LaunchMotionType.Impulse:
-                default:
-                    LaunchByImpulse(medal);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// 発射方向にImpulseで力を加える
-        /// </summary>
-        private void LaunchByImpulse(Rigidbody medal)
-        {
-            medal.AddForce(GetLaunchDirection() * _launchImpulse, ForceMode.Impulse);
+            LaunchBallisticToLandingPoint(medal);
         }
 
         /// <summary>
@@ -179,59 +113,6 @@ namespace EMR.Medal.Launch
                 medal.position,
                 GetLandingPosition(),
                 GetSafeTimeToLanding()));
-        }
-
-        /// <summary>
-        /// AnimationCurveで制御した軌道に沿って着地点まで移動させる
-        /// </summary>
-        private IEnumerator LaunchAlongCurve(Rigidbody medal)
-        {
-            var startPosition = medal.position;
-            var landingPosition = GetLandingPosition();
-            var timeToLanding = GetSafeTimeToLanding();
-            var originalIsKinematic = medal.isKinematic;
-            var originalUseGravity = medal.useGravity;
-
-            SetRigidbodyVelocity(medal, Vector3.zero);
-            medal.angularVelocity = Vector3.zero;
-            medal.useGravity = false;
-            medal.isKinematic = true;
-
-            var elapsedTime = 0f;
-
-            while (elapsedTime < timeToLanding)
-            {
-                if (!medal)
-                {
-                    yield break;
-                }
-
-                var normalizedTime = Mathf.Clamp01(elapsedTime / timeToLanding);
-                medal.MovePosition(EvaluateCurveLaunchPosition(startPosition, landingPosition, normalizedTime));
-
-                elapsedTime += Time.fixedDeltaTime;
-                yield return new WaitForFixedUpdate();
-            }
-
-            if (!medal)
-            {
-                yield break;
-            }
-
-            medal.MovePosition(landingPosition);
-
-            if (!_restorePhysicsAfterCurve)
-            {
-                yield break;
-            }
-
-            medal.isKinematic = originalIsKinematic;
-            medal.useGravity = originalUseGravity;
-
-            if (!medal.isKinematic)
-            {
-                SetRigidbodyVelocity(medal, CalculateCurveLandingVelocity(startPosition, landingPosition, timeToLanding));
-            }
         }
 
         /// <summary>
@@ -298,36 +179,6 @@ namespace EMR.Medal.Launch
             var initialVelocity = CalculateBallisticInitialVelocity(startPosition, landingPosition, timeToLanding);
 
             return startPosition + initialVelocity * elapsedTime + Physics.gravity * (0.5f * elapsedTime * elapsedTime);
-        }
-
-        /// <summary>
-        /// カーブ発射時の位置を計算する
-        /// </summary>
-        private Vector3 EvaluateCurveLaunchPosition(Vector3 startPosition, Vector3 landingPosition, float normalizedTime)
-        {
-            var time = Mathf.Clamp01(normalizedTime);
-            var progress = time <= 0f
-                ? 0f
-                : time >= 1f
-                    ? 1f
-                    : Mathf.Clamp01(_flightProgressCurve.Evaluate(time));
-
-            var height = time <= 0f || time >= 1f
-                ? 0f
-                : _flightHeightCurve.Evaluate(time) * _flightHeight;
-
-            return Vector3.Lerp(startPosition, landingPosition, progress) + Vector3.up * height;
-        }
-
-        /// <summary>
-        /// カーブ移動終了後に物理挙動へ戻すときの速度を計算する
-        /// </summary>
-        private Vector3 CalculateCurveLandingVelocity(Vector3 startPosition, Vector3 landingPosition, float timeToLanding)
-        {
-            var sampleTime = Mathf.Min(Time.fixedDeltaTime / timeToLanding, 0.25f);
-            var previousPosition = EvaluateCurveLaunchPosition(startPosition, landingPosition, 1f - sampleTime);
-
-            return (landingPosition - previousPosition) / (sampleTime * timeToLanding);
         }
 
         /// <summary>
@@ -422,23 +273,6 @@ namespace EMR.Medal.Launch
         }
 
         /// <summary>
-        /// 発射方向を取得する
-        /// </summary>
-        private Vector3 GetLaunchDirection()
-        {
-            var direction = DirectionExtensions.ToVector3(_baseLaunchDirection).normalized;
-
-            // 回転に追尾しない場合は、MoveDirectionのワールド方向をそのまま使う
-            if (!_useLaunchRotationForDirection)
-            {
-                return direction;
-            }
-
-            // 回転に追尾する場合は、発射基準の回転と_launchRotationOffsetを反映する
-            return GetLaunchRotation() * direction;
-        }
-
-        /// <summary>
         /// 発射基準のTransformを取得する
         /// </summary>
         private Transform GetLaunchReferenceTransform()
@@ -475,11 +309,6 @@ namespace EMR.Medal.Launch
 
         private void DrawLandingGizmos(Vector3 launchPosition, Vector3 landingPosition)
         {
-            if (_launchMotionType == LaunchMotionType.Impulse)
-            {
-                return;
-            }
-
             Gizmos.color = Color.magenta;
             Gizmos.DrawSphere(landingPosition, 0.3f);
             DrawWireDisc(landingPosition, Vector3.up, 0.65f, Color.magenta);
@@ -491,9 +320,7 @@ namespace EMR.Medal.Launch
             for (var i = 1; i <= trajectorySegmentCount; i++)
             {
                 var normalizedTime = i / (float)trajectorySegmentCount;
-                var nextPosition = _launchMotionType == LaunchMotionType.BallisticToLandingPoint
-                    ? EvaluateBallisticPosition(launchPosition, landingPosition, normalizedTime)
-                    : EvaluateCurveLaunchPosition(launchPosition, landingPosition, normalizedTime);
+                var nextPosition = EvaluateBallisticPosition(launchPosition, landingPosition, normalizedTime);
 
                 Gizmos.DrawLine(previousPosition, nextPosition);
                 previousPosition = nextPosition;
@@ -545,40 +372,30 @@ namespace EMR.Medal.Launch
             DrawWireDisc(mouseInputPosition, Vector3.up, 0.45f, Color.white);
         }
 
-        private void DrawLaunchPreviewGizmos(Vector3 launchPosition, Vector3 mouseInputPosition, float inputRatio)
+        private void DrawLaunchPreviewGizmos(Vector3 launchPosition, Vector3 landingPosition, float inputRatio)
         {
-            var launchDirection = GetLaunchDirection();
+            var initialVelocity = CalculateBallisticInitialVelocity(launchPosition, landingPosition, GetSafeTimeToLanding());
 
             Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(mouseInputPosition, launchPosition);
+            Gizmos.DrawLine(landingPosition, launchPosition);
 
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(launchPosition, 0.35f);
-            Gizmos.DrawRay(launchPosition, launchDirection * 3f);
-            DrawWireDisc(launchPosition, launchDirection.normalized, 0.55f, Color.green);
+
+            if (initialVelocity.sqrMagnitude > Mathf.Epsilon)
+            {
+                var launchDirection = initialVelocity.normalized;
+                Gizmos.DrawRay(launchPosition, launchDirection * 3f);
+                DrawWireDisc(launchPosition, launchDirection, 0.55f, Color.green);
+            }
+
             DrawGizmoLabel(launchPosition + Vector3.up * 0.8f, $"発射位置\nInput: {inputRatio:0.00}");
         }
 
         private void DrawSettingsLabel(Vector3 launchPosition, float inputRatio)
         {
             var labelPosition = launchPosition + Vector3.up * 1.6f;
-            var text = $"Mode: {_launchMotionType}\nInput: {inputRatio:0.00}";
-
-            switch (_launchMotionType)
-            {
-                case LaunchMotionType.BallisticToLandingPoint:
-                    text += $"\nLanding: Mouse Input\nTime: {GetSafeTimeToLanding():0.##}s";
-                    break;
-
-                case LaunchMotionType.CurveToLandingPoint:
-                    text += $"\nLanding: Mouse Input\nTime: {GetSafeTimeToLanding():0.##}s\nHeight: {_flightHeight:0.##}";
-                    break;
-
-                case LaunchMotionType.Impulse:
-                default:
-                    text += $"\nImpulse: {_launchImpulse:0.##}";
-                    break;
-            }
+            var text = $"Mode: BallisticToLandingPoint\nInput: {inputRatio:0.00}\nLanding: Mouse Input\nTime: {GetSafeTimeToLanding():0.##}s";
 
             DrawGizmoLabel(labelPosition, text);
         }
