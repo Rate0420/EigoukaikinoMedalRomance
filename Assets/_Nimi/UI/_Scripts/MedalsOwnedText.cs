@@ -9,7 +9,7 @@ namespace EMR.Medal.UI
     {
         [SerializeField] TMP_Text _medalsOwnedText; // 所持メダル数を表示するテキスト
 
-        private void OnEnable()
+        private void Start()
         {
             GameState.Instance.OwnedModel.OnCountChanged += SetMedalsOwnedCount;
         }
