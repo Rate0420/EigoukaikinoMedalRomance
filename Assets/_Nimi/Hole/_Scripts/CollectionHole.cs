@@ -18,7 +18,6 @@ namespace EMR.Medal.Hole
         {
             if (other.CompareTag(_medalTag))
             {
-
                 var medal = other.GetComponentInParent<Medal>();
                 if (medal != null)
                 {
@@ -30,10 +29,6 @@ namespace EMR.Medal.Hole
                 {
                     Debug.LogWarning("メダルタグが付いているオブジェクトにMedalコンポーネントが見つかりませんでした", other.gameObject);
                 }
-            }
-            else
-            {
-                Debug.Log("タグが一致していない対象が入った", other.gameObject);
             }
         }
     }

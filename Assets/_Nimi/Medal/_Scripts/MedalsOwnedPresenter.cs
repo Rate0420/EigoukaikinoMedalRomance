@@ -1,42 +1,33 @@
 using EMR.Medal.Hole;
-using EMR.Medal.UI;
-using EMR.Medal;
+using EMR.Core;
 using UnityEngine;
 
 namespace EMR.Medal
 {
     public class MedalsOwnedPresenter : MonoBehaviour
     {
-        [SerializeField] CollectionHole _collectionHole;
-        [SerializeField] MedalsOwnedText _medalsOwnedView;
-
-        MedalsOwnedModel _model;
-
-        void Awake()
-        {
-            _model = new MedalsOwnedModel();
-        }
+        [SerializeField] CollectionHole[] _collectionHole;
 
         void OnEnable()
         {
-            _collectionHole.OnMedalCollected += OnMedalCollected;
-            _model.OnCountChanged += _medalsOwnedView.SetMedalsOwnedCount;
+            foreach (var hole in _collectionHole)
+            {
+                hole.OnMedalCollected += OnMedalCollected;
+            }
         }
 
         void OnDisable()
         {
-            _collectionHole.OnMedalCollected -= OnMedalCollected;
-            _model.OnCountChanged -= _medalsOwnedView.SetMedalsOwnedCount;
+            foreach (var hole in _collectionHole)
+            {
+                hole.OnMedalCollected -= OnMedalCollected;
+            }
         }
 
-        void Start()
-        {
-            _medalsOwnedView.SetMedalsOwnedCount(_model.Count);
-        }
 
         void OnMedalCollected(Medal medal)
         {
-            _model.AddMedal(medal.Count);
+            GameState.Instance.OwnedModel.AddMedal(medal.Count);
         }
     }
-}
+};
