@@ -34,9 +34,9 @@ namespace EMR.Medal
             _medalsOwnedView.SetMedalsOwnedCount(_model.Count);
         }
 
-        void OnMedalCollected()
+        void OnMedalCollected(Medal medal)
         {
-            _model.AddMedal();
+            _model.AddMedal(medal.Count);
         }
     }
 }

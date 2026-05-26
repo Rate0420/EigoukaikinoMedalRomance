@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1840463067707330430}
   - component: {fileID: 2764741081746486083}
+  - component: {fileID: -5716759227798003399}
   m_Layer: 0
   m_Name: Medal
   m_TagString: Medal
@@ -60,6 +61,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &-5716759227798003399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8376625000210871995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 857c8065e971ddd4eab8accc21f83d39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _info:
+    _name: 
+    _count: 1
 --- !u!1001 &1401271544161059624
 PrefabInstance:
   m_ObjectHideFlags: 0
