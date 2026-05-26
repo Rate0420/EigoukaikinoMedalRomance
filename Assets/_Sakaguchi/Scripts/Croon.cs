@@ -26,7 +26,7 @@ public class Croon : MonoBehaviour
 
         if (JPC)
         {
-            rigit.MoveRotation(rigit.rotation * Quaternion.Euler(0, rps * Time.deltaTime * 360, 0));
+            rigit.MoveRotation(rigit.rotation * Quaternion.Euler(0,0, rps * Time.deltaTime * 360));
             return;
         }
 
