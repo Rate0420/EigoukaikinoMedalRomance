@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Medal : MonoBehaviour
+public class MedalLanded : MonoBehaviour
 {
     // 一回着地したらもう着地しないようにするためのフラグ
     bool hasLanded = false;
