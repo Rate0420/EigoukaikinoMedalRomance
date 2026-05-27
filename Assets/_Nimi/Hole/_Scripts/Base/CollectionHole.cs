@@ -17,6 +17,16 @@ namespace EMR.Medal.Hole
         /// </summary>
         public event Action<Medal> OnMedalCollected;
 
+        /// <summary>
+        /// メダルを判定したときに、メダルと当たったワールド座標を渡すイベント
+        /// </summary>
+        public event Action<Medal, Vector3> OnMedalCollectedAt;
+
+        /// <summary>
+        /// メダルが落ちた位置
+        /// </summary>
+        public Vector3 HitPosition { get; private set; }
+
 
         public void OnTriggerEnter(Collider other)
         {
@@ -25,12 +35,13 @@ namespace EMR.Medal.Hole
                 var medal = other.GetComponentInParent<Medal>();
                 if (medal != null)
                 {
+                    HitPosition = other.ClosestPoint(transform.position);
                     medal.Collect();
 
                     if (_isCount)
                     {
-                        // イベントを発行
                         OnMedalCollected?.Invoke(medal);
+                        OnMedalCollectedAt?.Invoke(medal, HitPosition);
                     }
                 }
                 else
