@@ -8,11 +8,15 @@ namespace EMR.Medal.Hole
     public class CollectionHole : MonoBehaviour
     {
         [SerializeField, Tag] string _medalTag = "Medal"; // メダルのタグ
+        [SerializeField] bool _isJackSpot = false; // ジャックスポットかどうか
+        [SerializeField] bool _isCount = false; // カウントするかどうか
+
 
         /// <summary>
         /// メダルを判定したときに発行されるイベント
         /// </summary>
         public event Action<Medal> OnMedalCollected;
+
 
         public void OnTriggerEnter(Collider other)
         {
@@ -22,8 +26,12 @@ namespace EMR.Medal.Hole
                 if (medal != null)
                 {
                     medal.Collect();
-                    // イベントを発行
-                    OnMedalCollected?.Invoke(medal);
+
+                    if (_isCount)
+                    {
+                        // イベントを発行
+                        OnMedalCollected?.Invoke(medal);
+                    }
                 }
                 else
                 {

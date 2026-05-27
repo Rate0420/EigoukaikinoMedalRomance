@@ -1,8 +1,7 @@
-using EMR.Medal.Hole;
 using EMR.Core;
 using UnityEngine;
 
-namespace EMR.Medal
+namespace EMR.Medal.Hole
 {
     public class MedalsOwnedPresenter : MonoBehaviour
     {
