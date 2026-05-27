@@ -27,7 +27,8 @@ namespace EMR.Core
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            OwnedModel = new MedalsOwnedModel();
+
+            OwnedModel = new MedalsOwnedModel(30);
 
             // 必要ならセーブデータから読み込み
             // OwnedModel.SetCount(SaveData.LoadMedalCount());
