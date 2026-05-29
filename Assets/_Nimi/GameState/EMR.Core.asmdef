@@ -1,0 +1,16 @@
+{
+    "name": "EMR.Core",
+    "rootNamespace": "EMR.Core",
+    "references": [
+        "GUID:6158a352aa97dc34cbaeb169d78a6560"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
