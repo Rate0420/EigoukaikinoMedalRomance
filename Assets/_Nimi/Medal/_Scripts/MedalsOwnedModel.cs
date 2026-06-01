@@ -20,6 +20,29 @@ namespace EMR.Medal
 
 
         /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="startCount">初期メダル数</param>
+        public MedalsOwnedModel(int startCount)
+        {
+            SetCount(startCount);
+        }
+
+
+        /// <summary>
+        /// 現在のメダル数を指定した数にするメソッド
+        /// </summary>
+        /// <param name="count">設定するメダル数</param>
+        /// <exception cref="ArgumentException">メダル数が負の数の場合</exception>
+        public void SetCount(int count)
+        {
+            if (count < 0) throw new ArgumentException("メダル数は負の数にすることはできません", nameof(count));
+            Count = count;
+            OnCountChanged?.Invoke(Count);
+        }
+
+
+        /// <summary>
         /// 現在のメダル数から+1するメソッド
         /// </summary>
         public void AddMedal()

@@ -122,3 +122,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _medalTag: Medal
+  _isJackSpot: 0
+  _isCount: 1
