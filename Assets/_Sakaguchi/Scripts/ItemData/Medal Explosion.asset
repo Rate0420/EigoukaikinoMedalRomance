@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1272c62f0cb46184086c81bc9e3115fc, type: 3}
   m_Name: Medal Explosion
   m_EditorClassIdentifier: 
+  explosionForce: 2000
+  explosionRadius: 25
+  upwardsModifier: 2

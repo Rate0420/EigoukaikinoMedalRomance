@@ -5,7 +5,7 @@ public static class ItemTriggerEvents
     public static System.Action OnInventoryChanged;
 
     public static System.Action OnMedalShot;
-    public static System.Action OnMedalLanded;
+    public static System.Action<GameObject> OnMedalLanded;
     public static System.Action OnMedalLost;
 
     public static System.Action OnRoundStart;

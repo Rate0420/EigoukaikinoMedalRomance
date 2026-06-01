@@ -9,6 +9,7 @@ public class BuffItemContext : MonoBehaviour
 
     // 消費アイテム処理クラス
     public VerticalShaking_process shakingProcess;
+    public MedalExplosion_process medalExplosionProcess;
 
 
     public void Gold()
@@ -23,5 +24,11 @@ public class BuffItemContext : MonoBehaviour
     public void StartVerticalShaking(float duration)
     {
         shakingProcess.StartShake(duration);
+    }
+
+    public void StartMedalExplosion(GameObject medal)
+    {
+        Debug.Log("StartMedalExplosion");
+        medalExplosionProcess.BlowAway(medal);
     }
 }

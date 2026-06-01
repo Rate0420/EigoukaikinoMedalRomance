@@ -7,7 +7,7 @@ public abstract class ItemEffect : ScriptableObject
     public virtual void OnInventoryChanged(BuffItemContext context) { }
 
     public virtual void OnMedalShot(BuffItemContext context) { }
-    public virtual void OnMedalLanded(BuffItemContext context/*Medal medal*/) { }
+    public virtual void OnMedalLanded(BuffItemContext context,GameObject medal) { }
     public virtual void OnMedalLost(BuffItemContext context) { }
 
     public virtual void OnRoundStart(BuffItemContext context) { }

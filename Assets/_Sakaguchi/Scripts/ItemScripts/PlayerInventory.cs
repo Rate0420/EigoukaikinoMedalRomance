@@ -58,17 +58,11 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    void OnMedalLanded()
+    void OnMedalLanded(GameObject medal)
     {
         foreach (ItemData item in inventory)
         {
-            if (item.effect != null)
-            {
-                item.effect.OnMedalLanded(context); // プレイヤーに効果を適用
-            }
-            else
-            {
-            }
+            item.effect?.OnMedalLanded(context, medal);
         }
     }
 
