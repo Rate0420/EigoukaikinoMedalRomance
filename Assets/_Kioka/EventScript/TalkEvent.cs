@@ -13,7 +13,6 @@ public class TalkEvent : ScriptableObject
     [System.Serializable]
     public class EventData
     {
-        //[Header("選択肢イベントのindex")] public int index;
         [Header("選択肢(2～3個)")] public ChooseData[] choices;
     }
 

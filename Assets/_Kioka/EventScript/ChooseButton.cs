@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class ChooseButton : MonoBehaviour
 {
-    [SerializeField] private ChooseManager chooseManager;  // ChooseManagerスクリプト
-    [SerializeField] private TalkEvent talkEvent;          // TalkEventスクリプト
-
-    [SerializeField] private GameObject chooseBtns;        // 選択肢のボタンまとめたもの
+    [SerializeField] private ChooseManager chooseManager;   // ChooseManagerスクリプト
 
     /// <summary>
     /// 選択肢のボタンを押したときの処理
