@@ -41,8 +41,6 @@ public class ReelController : MonoBehaviour
         targetIndex = (symbolCount + 1) - index;
         isStopping = true;
         stopDecelerationMultiplier = decelMultiplier;
-
-        Debug.Log($"StopSpin index:{index} → targetIndex:{targetIndex} decel:{decelMultiplier}");
     }
 
     void Update()
@@ -82,7 +80,6 @@ public class ReelController : MonoBehaviour
                 isSpinning = false;
                 isStopping = false;
                 currentSpeed = 0f;
-                Debug.Log($"Stopped at index:{targetIndex}");
             }
             else
             {
