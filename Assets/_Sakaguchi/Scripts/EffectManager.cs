@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using static ReserveManager;
 
 public class EffectManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class EffectManager : MonoBehaviour
     [SerializeField]string selectedCharacter;
     public float reachtime;
     [SerializeField] VideoEffectPlayer videoEffectPlayer;
+    public VideoEffectPlayer preEffectPlayer;
 
     enum selectedCharacterEnum
     {
@@ -99,6 +101,12 @@ public class EffectManager : MonoBehaviour
             int num = Random.Range(0, cutinPath.Length);
             if (num != selectedNumber) return num;
         }
+    }
+
+    public void PlayPreEffect()
+    {
+        int r = Random.Range(0, 1);
+        StartCoroutine(preEffectPlayer.PlayVideoNoFadeCoroutine(r, 1f));
     }
 
 }

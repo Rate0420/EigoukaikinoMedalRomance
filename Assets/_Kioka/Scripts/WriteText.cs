@@ -37,16 +37,16 @@ public class WriteText : MonoBehaviour
         if(chooseManager.isEvent == false)
         {
             //
-            // ここのFire1,Fire2を変える
+            // ここのFire1,Fire2を変える とりあえず||使ってキーマウに対応させる
             //
-            // テキストを表示（左ctrlキー）
-            if (Input.GetButtonDown("Fire1"))
+            // テキストを表示　左クリックorSpaceキー
+            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
             {
                 DrawText();
                 image.SetActive(false);     // Aボタンの画像を非表示にする
             }
-            // 早送り（左altキー）
-            if (Input.GetButtonDown("Fire2"))
+            // 早送り右クリックor左シフトキー
+            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftShift))
             {
                 if (!isFast)
                 {
@@ -94,8 +94,8 @@ public class WriteText : MonoBehaviour
             //
             // ここのFire1を変える
             //
-            // 左ctrlキーでシーン遷移
-            if (Input.GetButtonDown("Fire1") && !isSceneChange)
+            // 右クリックorスペースキーでシーン遷移
+            if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && !isSceneChange)
             {
                 FadeSceneChanger.ChangeScene(scene[0]);
                 isSceneChange = true;

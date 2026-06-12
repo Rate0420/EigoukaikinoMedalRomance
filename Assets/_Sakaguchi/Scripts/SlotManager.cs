@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using static ReserveManager;
 
 public class SlotManager : MonoBehaviour
 {
-    [SerializeField] SlotTestRend slotTestRend; // 結果表示用のクラス（後できっちりしたやつに変える）
-    [SerializeField] float winProbability = 0.1f; //当たりの確率
+    [SerializeField] float winProbability = 0.5f; //当たりの確率
     [SerializeField] ReelManager reelManager; //リールの管理クラス
     [SerializeField] float slotEndDelay = 1.0f; //スロットが止まってから次の抽選までの遅延時間
     [SerializeField] EffectManager effectManager; // 演出管理クラス
+    [SerializeField] ReserveManager reserveManager; // 保留管理クラス
     bool isWin; //当たりかどうか
-    bool isReach;
     int selectedNumber = 1; // ルートキャラに対応した数字(後で別のクラスから参照するように変更)
     public bool testflg;
 
@@ -68,18 +68,16 @@ public class SlotManager : MonoBehaviour
 
     EffectType effect;
 
-    int[] GenerateReelResult(int resultNumber)
+    int[] GenerateReelResult(int resultNumber,bool reach)
     {
         int[] reels = new int[3];
 
-        isReach = false;
-
         if (resultNumber == -1)
         {
-            // 外れでも一定確率でリーチ
-            if (Random.value < 0.25f) // ←ここ調整ポイント
+            // 外れでも1/4、もしくはキャラクターリーチ以上の演出ならリーチにする
+            if (Random.value < 0.25f || effect >= EffectType.CharacterReach)
             {
-                isReach = true;
+                reach = true;
             }
         }
 
@@ -105,7 +103,7 @@ public class SlotManager : MonoBehaviour
                 reels[2] = Random.Range(1, 10);
             }
 
-            if (isReach)
+            if (reach)
             {
                 int n = Random.Range(1, 10);
                 reels[0] = n;
@@ -220,41 +218,92 @@ public class SlotManager : MonoBehaviour
 
         if (r < winProbability)
         {
-            r = Random.value;
-
-            if (r < 0.40f) resultNumber = selectedNumber;
-            else if (r < 0.96f) resultNumber = GetRandomOtherNumber();
-            else resultNumber = 7;
+            resultNumber = GenerateResultNumber(); // 当たり
+            data.isReach = true; // ★確定でリーチ
         }
         else
         {
             resultNumber = -1;
+
+            // ★ここでリーチを決める（先に！）
+            data.isReach = Random.value < 0.25f;
         }
 
         data.resultNumber = resultNumber;
 
-        // 演出
+        // ↓ここで演出
         isWin = resultNumber != -1;
         EffectGenerate();
         data.rank = rank;
         data.effect = SelectEffect(rank);
 
+        // ★強演出なら強制リーチ
+        if (data.effect >= EffectType.CharacterReach)
+        {
+            data.isReach = true;
+        }
+
+        data.visual = DecideReserveVisual(data);
+
         return data;
+    }
+    ReserveVisualType DecideReserveVisual(ReserveData data)
+    {
+        // 面倒だがswitchでランク別にどの保留色になるかを決める
+        switch(data.rank)
+        {
+            case EffectRank.Weak:
+                // weakは7割ノーマル、3割青。
+                return Random.value < 0.7f ? ReserveVisualType.Normal : ReserveVisualType.Blue;
+            case EffectRank.Normal:
+                // 2割ノーマル、6割青、2割緑
+                return Random.value < 0.2f ? ReserveVisualType.Normal : (Random.value < 0.75f ? ReserveVisualType.Blue : ReserveVisualType.Green);
+            case EffectRank.Strong:
+                //　5割緑、5割赤
+                return Random.value < 0.5f ? ReserveVisualType.Green : ReserveVisualType.Red;
+            case EffectRank.VeryStrong:
+                return ReserveVisualType.Red;
+            case EffectRank.Jackpot:
+                return ReserveVisualType.Gold;
+            default:
+                return ReserveVisualType.Normal;
+        }
+    }
+
+    bool DecidePreEffect(ReserveData data)
+    {
+        if (data.rank >= EffectRank.Strong)
+        {
+            return Random.value < 0.7f;
+        }
+
+        if (data.rank == EffectRank.Normal)
+        {
+            return Random.value < 0.3f;
+        }
+
+        return false;
     }
 
     public IEnumerator PlaySlot(ReserveData data)
     {
-        // テストフラグが立っている場合は、常にキャラクターグループ演出にする
+        // テストフラグが立っている場合は、常に会話演出にする
         if (testflg)
         {
-            data.effect = EffectType.CharacterGroup;
-            data.rank = EffectRank.Strong;
-            int[] reel = GenerateReelResult(3); // 3を当たりとして生成
+            Coroutine preEffectCoroutine = null;
+            if (reserveManager.HasPreTarget())
+            {
+                effectManager.PlayPreEffect();
+            }
+
+            data.effect = EffectType.NormalTalk;
+            data.rank = EffectRank.Weak;
+            Debug.Log("ランク:"+data.rank +"演出:"+data.effect); 
+            int[] reel = GenerateReelResult(data.resultNumber,data.isReach); // 3を当たりとして生成
             reelManager.StartReels();
             Coroutine efc = StartCoroutine(effectManager.PlayEffect(data.effect));
             // efcが終わるまで待つ
             yield return efc;
-            Debug.Log($"[SlotManager] PlaySlot: 演出開始 {data.effect}");
             reelManager.StartStopReels(reel);
 
             yield return new WaitUntil(() =>
@@ -264,23 +313,35 @@ public class SlotManager : MonoBehaviour
 );
 
             yield return new WaitForSeconds(slotEndDelay);
+
+            if (preEffectCoroutine != null)
+            {
+                StopCoroutine(preEffectCoroutine);
+            }
         }
 
         else
         {
-            Coroutine effectCoroutine = null;
-            int[] reels = GenerateReelResult(data.resultNumber);
+            Coroutine preEffectCoroutine = null;
 
+            // 先読み対象があるか確認
+            if ( reserveManager.HasPreTarget())
+            {
+                Debug.Log("先読み演出");
+                effectManager.PlayPreEffect();
+            }
+
+            Coroutine effectCoroutine = null;
+            int[] reels = GenerateReelResult(data.resultNumber,data.isReach);
+            if(data.effect == EffectType.Freeze) reels = GenerateReelResult(7, true); // フリーズなら必ず7にする
+            Debug.Log("ランク:" + data.rank + "演出:" + data.effect);
             reelManager.StartReels();
-            Debug.Log($"[SlotManager] PlaySlot: 演出開始 {data.effect}");
             if (data.effect != EffectType.None)
             {
                 effectCoroutine = StartCoroutine(effectManager.PlayEffect(data.effect));
             }
 
-            yield return effectCoroutine;
-
-            if (data.effect != EffectType.None)
+            if (effectCoroutine != null)
             {
                 yield return effectCoroutine;
             }
@@ -295,7 +356,26 @@ public class SlotManager : MonoBehaviour
             );
 
             yield return new WaitForSeconds(slotEndDelay);
+
+            if (preEffectCoroutine != null)
+            {
+                StopCoroutine(preEffectCoroutine);
+            }
         }
+    }
+
+    int GenerateResultNumber()
+    {
+        int resultnum;
+        float r = Random.value;
+        //ルートキャラの数字 = 40% 
+        //非ルートキャラ = 8 %×7人 = 56 
+        //7(JPCC) = 4 %
+        if (r < 0.4f) resultnum = selectedNumber;
+        else if (r < 0.96f) resultnum = GetRandomOtherNumber();
+        else resultnum = 7;
+
+        return resultnum;
     }
 }
 
