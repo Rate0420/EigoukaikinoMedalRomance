@@ -9,20 +9,8 @@ public class ChooseButton : MonoBehaviour
     /// <summary>
     /// 選択肢のボタンを押したときの処理
     /// </summary>
-    // 選択肢1
-    public void OnClickButton1()
+    public void OnClickButton(int chooseIndex)
     {
-        chooseManager.OnChooseButton();
-        
-    }
-    // 選択肢2
-    public void OnClickButton2()
-    {
-        chooseManager.OnChooseButton();
-    }
-    // 選択肢3
-    public void OnClickButton3()
-    {
-        chooseManager.OnChooseButton();
+        chooseManager.OnChooseButton(chooseIndex);
     }
 }

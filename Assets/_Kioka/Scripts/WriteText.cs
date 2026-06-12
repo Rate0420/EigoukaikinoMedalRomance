@@ -11,7 +11,7 @@ public class WriteText : MonoBehaviour
     [SerializeField] private TextMeshProUGUI massageText;   // メッセージテキスト
     [SerializeField] private GameObject image;              // Aボタンの画像
     [SerializeField] private GameObject fastUI;             // 早送りの画像、テキスト
-    //[SerializeField] private string[] scene;              // シーン名
+    [SerializeField] private string[] scene;                // シーン名
     [SerializeField] private Animator anim;                 // アニメーター
 
     [SerializeField] private float textSpeed = 0.1f;        // テキストの速さ
@@ -26,7 +26,7 @@ public class WriteText : MonoBehaviour
     {
         storyData = DontDestroyStory.instance.story;
         anim = fastUI.GetComponent<Animator>();     // 早送りの画像、テキストからアニメーターを取得
-        //scene = storyData.sceneName;
+        scene = storyData.sceneName;
         setStoryUI.ChangeNameAndSprite();
         DrawText();
     }
@@ -36,16 +36,17 @@ public class WriteText : MonoBehaviour
         // 選択肢イベントが発生していないときのみ文字送り
         if(chooseManager.isEvent == false)
         {
-            // ここのFire1,Fire2を変える
             //
-            // テキストを表示（左ctrlキー）
-            if (Input.GetButtonDown("Fire1"))
+            // ここのFire1,Fire2を変える とりあえず||使ってキーマウに対応させる
+            //
+            // テキストを表示　左クリックorSpaceキー
+            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
             {
                 DrawText();
                 image.SetActive(false);     // Aボタンの画像を非表示にする
             }
-            // 早送り（左altキー）
-            if (Input.GetButtonDown("Fire2"))
+            // 早送り右クリックor左シフトキー
+            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftShift))
             {
                 if (!isFast)
                 {
@@ -90,10 +91,13 @@ public class WriteText : MonoBehaviour
         {
             anim.SetBool("ScaleBool", false);   // アニメーション停止
 
-            //マウス左クリック、Aボタンでシーン遷移
-            if (Input.GetButtonDown("Fire1") && !isSceneChange)
+            //
+            // ここのFire1を変える
+            //
+            // 右クリックorスペースキーでシーン遷移
+            if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && !isSceneChange)
             {
-                //FadeSceneChanger.ChangeScene(scene[0]);
+                FadeSceneChanger.ChangeScene(scene[0]);
                 isSceneChange = true;
             }
         }

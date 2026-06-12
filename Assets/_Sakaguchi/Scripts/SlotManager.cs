@@ -1,13 +1,17 @@
 ﻿using UnityEngine;
+using System.Collections;
+using static ReserveManager;
 
 public class SlotManager : MonoBehaviour
 {
-    [SerializeField] SlotTestRend slotTestRend; // 結果表示用のクラス（後できっちりしたやつに変える）
-    [SerializeField] float winProbability = 0.05f; //当たりの確率
+    [SerializeField] float winProbability = 0.5f; //当たりの確率
     [SerializeField] ReelManager reelManager; //リールの管理クラス
+    [SerializeField] float slotEndDelay = 1.0f; //スロットが止まってから次の抽選までの遅延時間
+    [SerializeField] EffectManager effectManager; // 演出管理クラス
+    [SerializeField] ReserveManager reserveManager; // 保留管理クラス
     bool isWin; //当たりかどうか
     int selectedNumber = 1; // ルートキャラに対応した数字(後で別のクラスから参照するように変更)
-
+    public bool testflg;
 
     /*
      
@@ -64,82 +68,18 @@ public class SlotManager : MonoBehaviour
 
     EffectType effect;
 
-    private void Update()
-    {
-        // スペースキーでスロット開始（テスト用）
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SlotStart();
-        }
-        // Nキーで100回スロット開始（テスト用）
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            for (int i = 0; i < 100; i++)
-            {
-                SlotStart();
-            }
-        }
-
-        // リール制御テストで7.2,7の結果でリールを回して止める
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            int[] testReels = new int[] { 7, 2, 7 };
-            slotTestRend.SlotRend(testReels, EffectRank.Jackpot, EffectType.Freeze);
-            reelManager.StartReels();
-            reelManager.StartStopReels(testReels);
-        }
-    }
-
-    public void SlotStart()
-    {
-        int resultNumber;
-        float r = Random.value;
-
-        if (r < winProbability)
-        {
-            isWin = true;
-
-            r = Random.value;
-            if (r < 0.40f) resultNumber = selectedNumber;
-            else if (r < 0.96f) resultNumber = GetRandomOtherNumber();
-            else resultNumber = 7;
-        }
-        else
-        {
-            isWin = false;
-            resultNumber = -1;
-        }
-
-        EffectGenerate();
-
-       effect = SelectEffect(rank);
-
-        float expectedRate = GetEffectWinRate(effect);
-
-        // 当たりの場合でフリーズ演出の際は7で確定させる
-        if (isWin && effect == EffectType.Freeze)
-        {
-            resultNumber = 7;
-        }
-
-        int[] reels = GenerateReelResult(resultNumber);
-
-        //Debug.Log($"【結果】当たり: {isWin}");
-        //Debug.Log($"【演出ランク】{rank}");
-        //Debug.Log($"【演出】{effect}");
-        //Debug.Log($"【信頼度】{expectedRate * 100}%");
-        //Debug.Log($"【リール】{reels[0]}, {reels[1]}, {reels[2]}");
-
-        //1行で出力
-        Debug.Log($"【結果】当たり: {isWin} | 【演出ランク】{rank} | 【演出】{effect} | 【信頼度】{expectedRate * 100}% | 【リール】{reels[0]}, {reels[1]}, {reels[2]}");
-        slotTestRend.SlotRend(reels, rank, effect);
-        reelManager.StartReels();
-        reelManager.StartStopReels(reels);
-    }
-
-    int[] GenerateReelResult(int resultNumber)
+    int[] GenerateReelResult(int resultNumber,bool reach)
     {
         int[] reels = new int[3];
+
+        if (resultNumber == -1)
+        {
+            // 外れでも1/4、もしくはキャラクターリーチ以上の演出ならリーチにする
+            if (Random.value < 0.25f || effect >= EffectType.CharacterReach)
+            {
+                reach = true;
+            }
+        }
 
         if (resultNumber != -1)
         {
@@ -163,10 +103,8 @@ public class SlotManager : MonoBehaviour
                 reels[2] = Random.Range(1, 10);
             }
 
-            // weakreach以上の演出だった場合二つ揃える。
-            if (effect >= EffectType.SetCharacterCutin)
+            if (reach)
             {
-                // リーチ風（2つ揃い）
                 int n = Random.Range(1, 10);
                 reels[0] = n;
                 reels[2] = n;
@@ -176,8 +114,7 @@ public class SlotManager : MonoBehaviour
                 {
                     reels[1] = Random.Range(1, 10);
                 }
-
-            }  
+            }
         }
 
         return reels;
@@ -187,9 +124,12 @@ public class SlotManager : MonoBehaviour
     {
         if (!isWin)
         {
-            // ハズレのときはweak,normal,strong,verystrongのどれか（weakが多め）
-            //rank = Random.value < 0.7f ? EffectRank.Weak : EffectRank.Normal;
-            rank = Random.value < 0.7f ? EffectRank.Weak : (Random.value < 0.85f ? EffectRank.Normal : (Random.value < 0.95f ? EffectRank.Strong : EffectRank.VeryStrong));
+            float r = Random.value;
+
+            if (r < 0.6f) rank = EffectRank.Weak;
+            else if (r < 0.85f) rank = EffectRank.Normal;
+            else if (r < 0.97f) rank = EffectRank.Strong;
+            else rank = EffectRank.VeryStrong; // ←ハズレでも来る
         }
         else
         {
@@ -210,8 +150,8 @@ public class SlotManager : MonoBehaviour
         switch (rank)
         {
             case EffectRank.Weak:
-                if (r < 0.7f) return EffectType.None;
-                if (r < 0.85f) return EffectType.NormalTalk;
+                if (r < 0.4f) return EffectType.None;
+                if (r < 0.7f) return EffectType.NormalTalk;
                 return EffectType.SetCharacterTalk;
 
             case EffectRank.Normal:
@@ -268,4 +208,174 @@ public class SlotManager : MonoBehaviour
         int index = Random.Range(0, otherNumbers.Length);
         return otherNumbers[index];
     }
+
+    public ReserveData GenerateReserveData()
+    {
+        ReserveData data = new ReserveData();
+
+        int resultNumber;
+        float r = Random.value;
+
+        if (r < winProbability)
+        {
+            resultNumber = GenerateResultNumber(); // 当たり
+            data.isReach = true; // ★確定でリーチ
+        }
+        else
+        {
+            resultNumber = -1;
+
+            // ★ここでリーチを決める（先に！）
+            data.isReach = Random.value < 0.25f;
+        }
+
+        data.resultNumber = resultNumber;
+
+        // ↓ここで演出
+        isWin = resultNumber != -1;
+        EffectGenerate();
+        data.rank = rank;
+        data.effect = SelectEffect(rank);
+
+        // ★強演出なら強制リーチ
+        if (data.effect >= EffectType.CharacterReach)
+        {
+            data.isReach = true;
+        }
+
+        data.visual = DecideReserveVisual(data);
+
+        return data;
+    }
+    ReserveVisualType DecideReserveVisual(ReserveData data)
+    {
+        // 面倒だがswitchでランク別にどの保留色になるかを決める
+        switch(data.rank)
+        {
+            case EffectRank.Weak:
+                // weakは7割ノーマル、3割青。
+                return Random.value < 0.7f ? ReserveVisualType.Normal : ReserveVisualType.Blue;
+            case EffectRank.Normal:
+                // 2割ノーマル、6割青、2割緑
+                return Random.value < 0.2f ? ReserveVisualType.Normal : (Random.value < 0.75f ? ReserveVisualType.Blue : ReserveVisualType.Green);
+            case EffectRank.Strong:
+                //　5割緑、5割赤
+                return Random.value < 0.5f ? ReserveVisualType.Green : ReserveVisualType.Red;
+            case EffectRank.VeryStrong:
+                return ReserveVisualType.Red;
+            case EffectRank.Jackpot:
+                return ReserveVisualType.Gold;
+            default:
+                return ReserveVisualType.Normal;
+        }
+    }
+
+    bool DecidePreEffect(ReserveData data)
+    {
+        if (data.rank >= EffectRank.Strong)
+        {
+            return Random.value < 0.7f;
+        }
+
+        if (data.rank == EffectRank.Normal)
+        {
+            return Random.value < 0.3f;
+        }
+
+        return false;
+    }
+
+    public IEnumerator PlaySlot(ReserveData data)
+    {
+        // テストフラグが立っている場合は、常に会話演出にする
+        if (testflg)
+        {
+            Coroutine preEffectCoroutine = null;
+            if (reserveManager.HasPreTarget())
+            {
+                effectManager.PlayPreEffect();
+            }
+
+            data.effect = EffectType.NormalTalk;
+            data.rank = EffectRank.Weak;
+            Debug.Log("ランク:"+data.rank +"演出:"+data.effect); 
+            int[] reel = GenerateReelResult(data.resultNumber,data.isReach); // 3を当たりとして生成
+            reelManager.StartReels();
+            Coroutine efc = StartCoroutine(effectManager.PlayEffect(data.effect));
+            // efcが終わるまで待つ
+            yield return efc;
+            reelManager.StartStopReels(reel);
+
+            yield return new WaitUntil(() =>
+    !reelManager.leftReel.IsSpinning &&
+    !reelManager.centerReel.IsSpinning &&
+    !reelManager.rightReel.IsSpinning
+);
+
+            yield return new WaitForSeconds(slotEndDelay);
+
+            if (preEffectCoroutine != null)
+            {
+                StopCoroutine(preEffectCoroutine);
+            }
+        }
+
+        else
+        {
+            Coroutine preEffectCoroutine = null;
+
+            // 先読み対象があるか確認
+            if ( reserveManager.HasPreTarget())
+            {
+                Debug.Log("先読み演出");
+                effectManager.PlayPreEffect();
+            }
+
+            Coroutine effectCoroutine = null;
+            int[] reels = GenerateReelResult(data.resultNumber,data.isReach);
+            if(data.effect == EffectType.Freeze) reels = GenerateReelResult(7, true); // フリーズなら必ず7にする
+            Debug.Log("ランク:" + data.rank + "演出:" + data.effect);
+            reelManager.StartReels();
+            if (data.effect != EffectType.None)
+            {
+                effectCoroutine = StartCoroutine(effectManager.PlayEffect(data.effect));
+            }
+
+            if (effectCoroutine != null)
+            {
+                yield return effectCoroutine;
+            }
+
+            reelManager.StartStopReels(reels);
+
+            // リール終了待ち（ここ大事）
+            yield return new WaitUntil(() =>
+                !reelManager.leftReel.IsSpinning &&
+                !reelManager.centerReel.IsSpinning &&
+                !reelManager.rightReel.IsSpinning
+            );
+
+            yield return new WaitForSeconds(slotEndDelay);
+
+            if (preEffectCoroutine != null)
+            {
+                StopCoroutine(preEffectCoroutine);
+            }
+        }
+    }
+
+    int GenerateResultNumber()
+    {
+        int resultnum;
+        float r = Random.value;
+        //ルートキャラの数字 = 40% 
+        //非ルートキャラ = 8 %×7人 = 56 
+        //7(JPCC) = 4 %
+        if (r < 0.4f) resultnum = selectedNumber;
+        else if (r < 0.96f) resultnum = GetRandomOtherNumber();
+        else resultnum = 7;
+
+        return resultnum;
+    }
 }
+

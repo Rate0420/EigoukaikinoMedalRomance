@@ -10,6 +10,7 @@ namespace EMR.Medal.Hole
         [SerializeField, Tag] string _medalTag = "Medal"; // メダルのタグ
         [SerializeField] bool _isJackSpot = false; // ジャックスポットかどうか
         [SerializeField] bool _isCount = false; // カウントするかどうか
+        [SerializeField] ReserveManager reserveManager;
 
 
         /// <summary>
@@ -42,6 +43,10 @@ namespace EMR.Medal.Hole
                     {
                         OnMedalCollected?.Invoke(medal);
                         OnMedalCollectedAt?.Invoke(medal, HitPosition);
+                    }
+                    if (_isJackSpot)
+                    {
+                        reserveManager.AddReserve();
                     }
                 }
                 else
