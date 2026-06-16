@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Medal
+  m_Name: Medal_side
   m_Shader: {fileID: 4800000, guid: df12117ecd77c31469c224178886498e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -53,11 +53,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseColorMap:
-        m_Texture: {fileID: 2800000, guid: 083d1af77643a2f4c80d4ba247bb16b3, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9f2e3c80d0ee0a2499376b41329328e9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 083d1af77643a2f4c80d4ba247bb16b3, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9f2e3c80d0ee0a2499376b41329328e9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Bump2ndMap:
@@ -69,7 +69,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: c99bec451e9b55b43aaaa51827ef7b40, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -169,7 +169,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 083d1af77643a2f4c80d4ba247bb16b3, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9f2e3c80d0ee0a2499376b41329328e9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MatCap2ndBlendMask:
@@ -308,7 +308,7 @@ Material:
     - _AnisotropyShiftNoiseScale: 0
     - _AnisotropySpecularStrength: 1
     - _AnisotropyTangentWidth: 1
-    - _ApplyReflection: 1
+    - _ApplyReflection: 0
     - _ApplySpecular: 1
     - _ApplySpecularFA: 1
     - _AsOverlay: 0
@@ -485,7 +485,7 @@ Material:
     - _MatCapShadowMask: 0
     - _MatCapVRParallaxStrength: 1
     - _MatCapZRotCancel: 1
-    - _Metallic: 0.5
+    - _Metallic: 1
     - _MonochromeLighting: 0
     - _OcclusionStrength: 1
     - _OffsetFactor: 0
@@ -534,7 +534,7 @@ Material:
     - _ParallaxOffset: 0.5
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Reflectance: 0.65
+    - _Reflectance: 0.04
     - _ReflectionApplyTransparency: 1
     - _ReflectionBlendMode: 1
     - _ReflectionCubeEnableLighting: 1
@@ -570,7 +570,7 @@ Material:
     - _Shadow3rdReceive: 0
     - _ShadowBlur: 0.5
     - _ShadowBlurMaskLOD: 0
-    - _ShadowBorder: 0.602
+    - _ShadowBorder: 0.75
     - _ShadowBorderMaskLOD: 0
     - _ShadowBorderRange: 0.08
     - _ShadowColorType: 0
@@ -585,13 +585,13 @@ Material:
     - _ShadowStrength: 1
     - _ShadowStrengthMaskLOD: 0
     - _ShiftBackfaceUV: 0
-    - _Smoothness: 1
+    - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
-    - _SpecularBlur: 0.289
+    - _SpecularBlur: 0
     - _SpecularBorder: 0.5
     - _SpecularHighlights: 1
     - _SpecularNormalStrength: 1
-    - _SpecularToon: 0
+    - _SpecularToon: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _SrcBlendAlphaFA: 0
@@ -633,7 +633,7 @@ Material:
     - _UseAudioLink: 0
     - _UseBacklight: 0
     - _UseBump2ndMap: 0
-    - _UseBumpMap: 1
+    - _UseBumpMap: 0
     - _UseClippingCanceller: 0
     - _UseDither: 0
     - _UseEmission: 0
@@ -646,9 +646,9 @@ Material:
     - _UseOutline: 0
     - _UsePOM: 0
     - _UseParallax: 0
-    - _UseReflection: 1
+    - _UseReflection: 0
     - _UseRim: 0
-    - _UseRimShade: 1
+    - _UseRimShade: 0
     - _UseShadow: 1
     - _VertexLightStrength: 0
     - _WorkflowMode: 1
@@ -690,7 +690,7 @@ Material:
     - _Emission2ndMap_ScrollRotate: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionBlendMask_ScrollRotate: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionBlink: {r: 0, g: 0, b: 3.141593, a: 0}
-    - _EmissionColor: {r: 0.7167083, g: 0.74028414, b: 0, a: 0.078}
+    - _EmissionColor: {r: 0.7167083, g: 0.74028414, b: 0, a: 1}
     - _EmissionMap_ScrollRotate: {r: 0, g: 0, b: 0, a: 0}
     - _GlitterAtras: {r: 1, g: 1, b: 0, a: 0}
     - _GlitterColor: {r: 1, g: 1, b: 1, a: 1}

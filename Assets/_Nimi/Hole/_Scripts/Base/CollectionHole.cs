@@ -46,7 +46,7 @@ namespace EMR.Medal.Hole
                     }
                     if (_isJackSpot)
                     {
-                        reserveManager.AddReserve();
+                        reserveManager?.AddReserve();
                     }
                 }
                 else
