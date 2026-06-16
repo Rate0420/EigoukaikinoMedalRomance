@@ -8,7 +8,7 @@ public class VideoEffectPlayer : MonoBehaviour
     Renderer videoRenderer;
     [SerializeField] float endlength = 0.5f; // 終了前にフェードアウトする時間
 
-    [SerializeField] string[] videoPaths;
+    public string[] videoPaths;
 
     Material mat;
     Color color;
@@ -121,22 +121,100 @@ public class VideoEffectPlayer : MonoBehaviour
         yield return new WaitUntil(() => videoPlayer.time >= endTime);
     }
 
-    IEnumerator FadeOut(float duration)
+    public IEnumerator PlayVideoFadeInOut(int id, float playbackSpeed = 1f, float fadeintime = 0f, float fadeouttime = 0f)
     {
-
-
-        float startAlpha = color.a;
-        float time = 0f;
-
-        while (time < duration)
+        if (id < 0 || id >= videoPaths.Length)
         {
-            float t = time / duration;
-            color.a = Mathf.Lerp(startAlpha, 0f, t);
-            mat.color = color;
+            Debug.LogError("Invalid video ID");
+            yield break;
+        }
 
-            time += Time.deltaTime;
+        videoPlayer.url = videoPaths[id];
+        videoPlayer.playbackSpeed = playbackSpeed;
+        videoRenderer.enabled = false;
+
+        bool isPrepared = false;
+
+        void OnPrepared(VideoPlayer vp)
+        {
+            isPrepared = true;
+        }
+
+        videoPlayer.prepareCompleted += OnPrepared;
+        videoPlayer.Prepare();
+
+        yield return new WaitUntil(() => isPrepared);
+
+        videoPlayer.prepareCompleted -= OnPrepared; // ★超重要（イベント解除）
+
+        // 最初から透明にする
+        color.a = 0f;
+        mat.color = color;
+
+        videoRenderer.enabled = true;
+
+        videoPlayer.Play();
+
+        // ★フェードイン（0ならスキップ）
+        if (fadeintime > 0f)
+            yield return StartCoroutine(FadeIn(fadeintime));
+        else
+        {
+            color.a = 1f;
+            mat.color = color;
+        }
+
+        // ★length安定待ち（1フレーム）
+        yield return null;
+
+        double endTime = videoPlayer.length - fadeouttime;
+        if (endTime < 0) endTime = 0;
+
+        yield return new WaitUntil(() => videoPlayer.time >= endTime);
+
+        // ★フェードアウト
+        if (fadeouttime > 0f)
+            yield return StartCoroutine(FadeOut(fadeouttime));
+        else
+        {
+            color.a = 0f;
+            mat.color = color;
+        }
+
+        videoPlayer.Stop();
+        videoRenderer.enabled = false;
+    }
+    IEnumerator FadeIn(float time)
+    {
+        float t = 0f;
+
+        while (t < time)
+        {
+            t += Time.deltaTime;
+            float a = Mathf.Clamp01(t / time);
+            color.a = a;
+            mat.color = color;
             yield return null;
         }
 
+        color.a = 1f;
+        mat.color = color;
+    }
+
+    IEnumerator FadeOut(float time)
+    {
+        float t = 0f;
+
+        while (t < time)
+        {
+            t += Time.deltaTime;
+            float a = 1f - Mathf.Clamp01(t / time);
+            color.a = a;
+            mat.color = color;
+            yield return null;
+        }
+
+        color.a = 0f;
+        mat.color = color;
     }
 }
