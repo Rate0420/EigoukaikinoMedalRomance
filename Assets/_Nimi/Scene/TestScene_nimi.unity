@@ -2804,6 +2804,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 901012504}
     m_Modifications:
+    - target: {fileID: 846665196743080481, guid: f31e10be505ff0e48a6557dcc7062e95, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d3ddfe223161ffd40b181f943900774b, type: 2}
     - target: {fileID: 1219070336022098732, guid: f31e10be505ff0e48a6557dcc7062e95, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -11439,7 +11443,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: ab09877e2e707104187f6f83e2f62510, type: 2}
+  sharedProfile: {fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2}
 --- !u!4 &1541038615
 Transform:
   m_ObjectHideFlags: 0
