@@ -1,5 +1,5 @@
-using EMR.Medal;
 using UnityEngine;
+using EMR.Medal;
 
 namespace EMR.Core
 {
@@ -15,6 +15,12 @@ namespace EMR.Core
         /// </summary>
         public MedalsOwnedModel OwnedModel { get; private set; }
 
+        /// <summary>
+        /// メダルの払い戻しの通知システム
+        /// </summary>
+        public MedalRefundNotifier RefundNotifier { get; private set; }
+
+
         private void Awake()
         {
             // 既にインスタンスが存在する場合は、このオブジェクトを破棄します。
@@ -29,6 +35,7 @@ namespace EMR.Core
 
 
             OwnedModel = new MedalsOwnedModel(30);
+            RefundNotifier = new MedalRefundNotifier();
 
             // 必要ならセーブデータから読み込み
             // OwnedModel.SetCount(SaveData.LoadMedalCount());
