@@ -15,6 +15,8 @@ public class ReserveManager : MonoBehaviour
     [SerializeField] EffectManager effectManager;
     [SerializeField] GameObject[] ReserveObject;  // 0:現在消化中の保留、1~5:保留スロット
 
+    public bool isPaused = false;
+
     public void UpgradeReserve(int index)
     {
         var array = reserves.ToArray();
@@ -70,6 +72,9 @@ public class ReserveManager : MonoBehaviour
 
         while (reserves.Count > 0)
         {
+
+            yield return new WaitUntil(() => !isPaused);
+            
             DecidePreTargets();
 
             currentReserve = reserves.Dequeue();

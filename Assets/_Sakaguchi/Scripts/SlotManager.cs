@@ -20,6 +20,8 @@ public class SlotManager : MonoBehaviour
     int StageChangeCount = 5; // ステージチェンジさせる回転数
     [SerializeField] BackgroundManager bgManager;
 
+    [SerializeField] WinManager winManager;
+
     /*
      
     ・Weak（ほぼ外れ）
@@ -308,10 +310,23 @@ public class SlotManager : MonoBehaviour
             reelManager.StartStopReels(reel);
 
             yield return new WaitUntil(() =>
-    !reelManager.leftReel.IsSpinning &&
-    !reelManager.centerReel.IsSpinning &&
-    !reelManager.rightReel.IsSpinning
-);
+                !reelManager.leftReel.IsSpinning &&
+                !reelManager.centerReel.IsSpinning &&
+                !reelManager.rightReel.IsSpinning
+            );
+
+            // ★ここが重要（当たり処理）
+            if (data.resultNumber != -1 && data.resultNumber != 7)
+            {
+                // 保留停止
+                reserveManager.isPaused = true;
+
+                // 当たり演出
+                yield return StartCoroutine(winManager.PlayWin(data.resultNumber));
+
+                // 再開
+                reserveManager.isPaused = false;
+            }
 
             yield return new WaitForSeconds(slotEndDelay);
 
@@ -355,6 +370,19 @@ public class SlotManager : MonoBehaviour
                 !reelManager.centerReel.IsSpinning &&
                 !reelManager.rightReel.IsSpinning
             );
+
+            // ★ここが重要（当たり処理）
+            if (data.resultNumber != -1 && data.resultNumber != 7)
+            {
+                // 保留停止
+                reserveManager.isPaused = true;
+
+                // 当たり演出
+                yield return StartCoroutine(winManager.PlayWin(data.resultNumber));
+
+                // 再開
+                reserveManager.isPaused = false;
+            }
 
             yield return new WaitForSeconds(slotEndDelay);
 
