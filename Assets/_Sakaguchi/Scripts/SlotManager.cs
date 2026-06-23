@@ -328,6 +328,19 @@ public class SlotManager : MonoBehaviour
                 reserveManager.isPaused = false;
             }
 
+            // とりあえずresultnumが７の場合も処理する
+            if (data.resultNumber == 7)
+            {
+                // 保留停止
+                reserveManager.isPaused = true;
+
+                // 当たり演出
+                yield return StartCoroutine(winManager.PlayWin(data.resultNumber));
+
+                // 再開
+                reserveManager.isPaused = false;
+            }
+
             yield return new WaitForSeconds(slotEndDelay);
 
             if (preEffectCoroutine != null)
@@ -348,8 +361,10 @@ public class SlotManager : MonoBehaviour
             }
 
             Coroutine effectCoroutine = null;
-            int[] reels = GenerateReelResult(data.resultNumber,data.isReach);
-            if(data.effect == EffectType.Freeze) reels = GenerateReelResult(7, true); // フリーズなら必ず7にする
+            int[] reels;
+            if (data.effect == EffectType.Freeze) reels = GenerateReelResult(7, true); // フリーズなら必ず7にする
+            else reels = GenerateReelResult(data.resultNumber, data.isReach);
+            
             Debug.Log("ランク:" + data.rank + "演出:" + data.effect);
             reelManager.StartReels();
             if (data.effect != EffectType.None)
@@ -370,19 +385,6 @@ public class SlotManager : MonoBehaviour
                 !reelManager.centerReel.IsSpinning &&
                 !reelManager.rightReel.IsSpinning
             );
-
-            // ★ここが重要（当たり処理）
-            if (data.resultNumber != -1 && data.resultNumber != 7)
-            {
-                // 保留停止
-                reserveManager.isPaused = true;
-
-                // 当たり演出
-                yield return StartCoroutine(winManager.PlayWin(data.resultNumber));
-
-                // 再開
-                reserveManager.isPaused = false;
-            }
 
             yield return new WaitForSeconds(slotEndDelay);
 
@@ -415,6 +417,31 @@ public class SlotManager : MonoBehaviour
                     }
                     Kakuhen = false;
                     playCount = 0;
+                }
+
+                if (data.resultNumber != -1 && data.resultNumber != 7)
+                {
+                    // 保留停止
+                    reserveManager.isPaused = true;
+
+                    // 当たり演出
+                    yield return StartCoroutine(winManager.PlayWin(data.resultNumber));
+
+                    // 再開
+                    reserveManager.isPaused = false;
+                }
+
+                // とりあえずresultnumが７の場合も処理する
+                if (data.resultNumber == 7)
+                {
+                    // 保留停止
+                    reserveManager.isPaused = true;
+
+                    // 当たり演出
+                    yield return StartCoroutine(winManager.PlayWin(data.resultNumber));
+
+                    // 再開
+                    reserveManager.isPaused = false;
                 }
             }
 

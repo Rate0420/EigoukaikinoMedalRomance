@@ -1,12 +1,17 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using EMR.Medal.Refund;
+using EMR.Core;
 
 public class WinManager : MonoBehaviour
 {
     [SerializeField] GameObject winUI;
     [SerializeField] TextMeshPro payoutText;
     [SerializeField] VideoEffectPlayer videoPlayer;
+
+    [SerializeField] MedalRefundBehaviour refundBehaviour;
+
 
     public IEnumerator PlayWin(int resultNumber)
     {
@@ -20,25 +25,59 @@ public class WinManager : MonoBehaviour
         winUI.SetActive(true);
         payoutText.text = $"{payout}枚";
 
-        // ④ 外部払い出し（ここは仮）
-        yield return StartCoroutine(WaitPayout(payout));
+        bool isFinished = false;
 
-        // ⑤ UI消す
+        System.Action<int> spawnHandler = null;
+        System.Action finishHandler = null;
+
+        // Update the remaining payout count per spawned medal.
+        spawnHandler = (remaining) =>
+        {
+            payoutText.text = $"{remaining}枚";
+        };
+
+        
+        finishHandler = () => isFinished = true;
+
+        if (refundBehaviour == null)
+        {
+            Debug.LogError($"{nameof(WinManager)}: {nameof(refundBehaviour)} is not assigned.");
+            winUI.SetActive(false);
+            yield break;
+        }
+
+        refundBehaviour.OnMedalSpawned += spawnHandler;
+        refundBehaviour.OnRefundFinished += finishHandler;
+
+        GameState.Instance.RefundNotifier.RequestRefund(payout);
+
+        float timeout = Mathf.Max(10f, payout * 0.5f + 5f);
+        float elapsed = 0f;
+        while (!isFinished && elapsed < timeout)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        refundBehaviour.OnMedalSpawned -= spawnHandler;
+        refundBehaviour.OnRefundFinished -= finishHandler;
+
+        if (!isFinished)
+        {
+            Debug.LogWarning($"{nameof(WinManager)}: Refund did not finish within {timeout:0.0} seconds. Resuming slot processing.");
+        }
+
         winUI.SetActive(false);
+
     }
 
     int GetPayout(int number)
     {
         // 偶数・奇数で分岐
+        if (number == 7) return 100;
         if (number % 2 == 0)
-            return 50;
-        else
             return 30;
-    }
-
-    IEnumerator WaitPayout(int amount)
-    {
-        // 仮：3秒待つ（あとで差し替え）
-        yield return new WaitForSeconds(3f);
+        else
+            return 50;
     }
 }
