@@ -11,6 +11,7 @@ public class ReelManager : MonoBehaviour
 
     Coroutine stopCoroutine;
     bool isRunning = false;
+    const float ReelStopTimeout = 8f;
 
     public void StartReels()
     {
@@ -38,11 +39,11 @@ public class ReelManager : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
 
         leftReel.StopSpin(result[0]);
-        yield return new WaitUntil(() => !leftReel.IsSpinning);
+        yield return WaitReelStopped(leftReel, result[0], "left");
         yield return new WaitForSeconds(0.3f);
 
         rightReel.StopSpin(result[2]);
-        yield return new WaitUntil(() => !rightReel.IsSpinning);
+        yield return WaitReelStopped(rightReel, result[2], "right");
 
         if (isReach)
         {
@@ -57,8 +58,24 @@ public class ReelManager : MonoBehaviour
 
         float centerDecel = isReach ? 2.5f : 1f;
         centerReel.StopSpin(result[1], centerDecel);
-        yield return new WaitUntil(() => !centerReel.IsSpinning);
+        yield return WaitReelStopped(centerReel, result[1], "center");
 
         isRunning = false;
+    }
+
+    IEnumerator WaitReelStopped(ReelController reel, int resultNumber, string reelName)
+    {
+        float elapsed = 0f;
+        while (reel.IsSpinning && elapsed < ReelStopTimeout)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (reel.IsSpinning)
+        {
+            Debug.LogWarning($"{nameof(ReelManager)}: {reelName} reel did not stop within {ReelStopTimeout:0.0} seconds. Forcing stop to {resultNumber}.");
+            reel.ForceStop(resultNumber);
+        }
     }
 }

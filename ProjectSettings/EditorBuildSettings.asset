@@ -8,6 +8,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Tsujita/TestScenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/_Sakaguchi/Scenes/TestScene_sakaguchi_v3.unity
+    guid: 2c6b9f3e0340f8f4f813f82bad213d09
+  - enabled: 1
+    path: Assets/_Sakaguchi/Scenes/Sakaguchi_TestStoryScene.unity
+    guid: c6fb59cdfee23574baa0e09ca15f6151
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

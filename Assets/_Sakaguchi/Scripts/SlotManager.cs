@@ -362,8 +362,15 @@ public class SlotManager : MonoBehaviour
 
             Coroutine effectCoroutine = null;
             int[] reels;
-            if (data.effect == EffectType.Freeze) reels = GenerateReelResult(7, true); // フリーズなら必ず7にする
-            else reels = GenerateReelResult(data.resultNumber, data.isReach);
+            if (data.effect == EffectType.Freeze)
+            {
+                data.resultNumber = 7;
+                reels = GenerateReelResult(7, true);
+            }
+            else
+            {
+                reels = GenerateReelResult(data.resultNumber, data.isReach);
+            }
             
             Debug.Log("ランク:" + data.rank + "演出:" + data.effect);
             reelManager.StartReels();

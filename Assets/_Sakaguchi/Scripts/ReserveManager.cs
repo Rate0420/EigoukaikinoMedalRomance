@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ReserveManager : MonoBehaviour
+public class ReserveManager : MonoBehaviour,IGamePausable
 {
     [SerializeField] int maxReserve = 5;
     Queue<ReserveData> reserves = new Queue<ReserveData>();
@@ -183,6 +183,16 @@ public class ReserveManager : MonoBehaviour
             if (r.isPreTarget) return true;
         }
         return false;
+    }
+
+    public void Pause()
+    { 
+        isPaused = true;
+    }
+
+    public void Resume()
+    { 
+        isPaused = false;
     }
 }
 
