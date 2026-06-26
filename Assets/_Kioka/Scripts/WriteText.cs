@@ -7,6 +7,7 @@ public class WriteText : MonoBehaviour
     [SerializeField] private StoryData storyData;           // スクリプタブルオブジェクト
     [SerializeField] private SetStoryUI setStoryUI;         // SetStoryUIスクリプト
     [SerializeField] private ChooseManager chooseManager;   // ChooseManagerスクリプト
+    [SerializeField] private BackLogManager backLogManager; // BackLogManagerスクリプト
 
     [SerializeField] private TextMeshProUGUI massageText;   // メッセージテキスト
     [SerializeField] private GameObject image;              // Aボタンの画像
@@ -34,31 +35,35 @@ public class WriteText : MonoBehaviour
     private void Update()
     {
         // 選択肢イベントが発生していないときのみ文字送り
-        if(chooseManager.isEvent == false)
+        if (chooseManager.isEvent == false)
         {
             //
             // ここのFire1,Fire2を変える とりあえず||使ってキーマウに対応させる
             //
-            // テキストを表示　左クリックorSpaceキー
-            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
+            // バックログを表示していないときのみテキストを表示
+            // 左クリックorSpaceキー
+            if (backLogManager.isBackLog == false)
             {
-                DrawText();
-                image.SetActive(false);     // Aボタンの画像を非表示にする
-            }
-            // 早送り右クリックor左シフトキー
-            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                if (!isFast)
+                if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
                 {
-                    isFast = true;      // 早送り
-                    textSpeed = 0.04f;
-                    anim.SetBool("ScaleBool", true);    // アニメーション再生
+                    DrawText();
+                    image.SetActive(false);     // Aボタンの画像を非表示にする
                 }
-                else
+                // 早送り右クリックor左シフトキー
+                if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftShift))
                 {
-                    isFast = false;     // 元の速さに戻す
-                    textSpeed = 0.1f;
-                    anim.SetBool("ScaleBool", false);   // アニメーション停止
+                    if (!isFast)
+                    {
+                        isFast = true;      // 早送り
+                        textSpeed = 0.04f;
+                        anim.SetBool("ScaleBool", true);    // アニメーション再生
+                    }
+                    else
+                    {
+                        isFast = false;     // 元の速さに戻す
+                        textSpeed = 0.1f;
+                        anim.SetBool("ScaleBool", false);   // アニメーション停止
+                    }
                 }
             }
         }
@@ -69,7 +74,7 @@ public class WriteText : MonoBehaviour
     /// </summary>
     public void DrawText()
     {
-        if (isDrawing) 
+        if (isDrawing)
         {
             // 文字を出している最中に連打された場合は、文字をすべて表示する
             StopAllCoroutines();    // コルーチンを停止
@@ -124,7 +129,7 @@ public class WriteText : MonoBehaviour
         massageText.text = massage;
         yield return null;
 
-        index++; 
+        index++;
 
         image.SetActive(true);
         isDrawing = false;
