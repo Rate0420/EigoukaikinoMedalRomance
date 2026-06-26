@@ -50,6 +50,7 @@ public class ChooseManager : MonoBehaviour
         Selectable selectable = backLogBtn.GetComponent<Selectable>();
         // Navigation構造体を取得
         Navigation nav = selectable.navigation;
+        nav.selectOnDown = null;  // バックログボタンからの移動先ボタンを設定
 
         // indexとnumberの番号が同じで、まだ処理していない場合だけ表示
         // Containsで同じ数字が含まれているか判別

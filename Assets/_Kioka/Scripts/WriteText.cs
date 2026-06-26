@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class WriteText : MonoBehaviour
 {
@@ -22,6 +23,10 @@ public class WriteText : MonoBehaviour
 
     private bool isFast;        // 早送りかどうかの判別
     private bool isDrawing;     // メッセージを書いているどうかの判別(連打防止)
+
+
+    private string currentMessage; // 今表示してる文章
+    private int currentLength;     // 表示済み文字数
 
     private void Start()
     {
@@ -46,6 +51,13 @@ public class WriteText : MonoBehaviour
             {
                 if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
                 {
+                    // 直前にバックログを閉じるボタンを押していたら実行しない
+                    if (backLogManager.isClick)
+                    {
+                        backLogManager.isClick = false;
+                        return;
+                    }
+
                     DrawText();
                     image.SetActive(false);     // Aボタンの画像を非表示にする
                 }
@@ -84,7 +96,6 @@ public class WriteText : MonoBehaviour
             image.SetActive(true);
             isDrawing = false;
         }
-
         else if (index < storyData.text.Length)
         {
             StopAllCoroutines();        // 連打対策
@@ -114,11 +125,19 @@ public class WriteText : MonoBehaviour
     private IEnumerator CorDrawText(string massage)
     {
         if (isDrawing) yield break;
+
         isDrawing = true;
         setStoryUI.ChangeNameAndSprite();
         float time = 0f;
         while (true)
         {
+            // バックログ表示中は一時停止
+            if (backLogManager.isBackLog)
+            {
+                yield return null;
+                continue;
+            }
+
             yield return null;
             time += Time.deltaTime;
             int length = Mathf.FloorToInt(time / textSpeed);

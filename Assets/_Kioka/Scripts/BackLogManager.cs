@@ -11,15 +11,15 @@ public class BackLogManager : MonoBehaviour
     [SerializeField] private GameObject textBtn;
 
     public bool isBackLog;  // バックログが表示されているか判定
+    public bool isClick;    // 閉じるボタンを押したか判定
 
     void Start()
     {
         backLog.SetActive(false);   // バックログ非表示
         EventSystem.current.SetSelectedGameObject(textBtn); // テキストボタンを最初に選択
         isBackLog = false;
+        isClick = false;
     }
-
-
 
     /// <summary>
     /// ボタン押下時の処理
@@ -37,7 +37,8 @@ public class BackLogManager : MonoBehaviour
         // 閉じるボタン
         else if (btnNum == 1)
         {
-            isBackLog = false;          
+            isBackLog = false;
+            isClick = true;
             backLog.SetActive(false);   // バックログ非表示
             EventSystem.current.SetSelectedGameObject(textBtn);  // テキストボタンを最初に選択
 
