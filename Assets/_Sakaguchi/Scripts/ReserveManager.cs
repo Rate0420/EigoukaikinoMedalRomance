@@ -15,6 +15,12 @@ public class ReserveManager : MonoBehaviour
     [SerializeField] EffectManager effectManager;
     [SerializeField] GameObject[] ReserveObject;  // 0:現在消化中の保留、1~5:保留スロット
 
+    [SerializeField] GamePause gamePause;
+
+
+    public bool isPaused = false;
+
+
     public void UpgradeReserve(int index)
     {
         var array = reserves.ToArray();
@@ -35,7 +41,12 @@ public class ReserveManager : MonoBehaviour
         Gold
     }
 
-    bool isProcessing = false;
+    public bool isProcessing = false;
+
+    private void Start()
+    {
+        gamePause.OnPausedChange += ChangePause;
+    }
 
     private void Update()
     {
@@ -66,10 +77,13 @@ public class ReserveManager : MonoBehaviour
 
     IEnumerator ProcessReserve()
     {
-        isProcessing = true;
+        
 
         while (reserves.Count > 0)
         {
+
+            yield return new WaitUntil(() => !isPaused);
+            isProcessing = true;
             DecidePreTargets();
 
             currentReserve = reserves.Dequeue();
@@ -80,9 +94,8 @@ public class ReserveManager : MonoBehaviour
 
             currentReserve = null; // 終わったらクリア
             UpdateReserveVisuals();
+            isProcessing = false;
         }
-
-        isProcessing = false;
     }
 
     public void UpdateReserveVisuals()
@@ -178,6 +191,11 @@ public class ReserveManager : MonoBehaviour
             if (r.isPreTarget) return true;
         }
         return false;
+    }
+
+    public void ChangePause()
+    { 
+        isPaused = gamePause.isPaused;
     }
 }
 
