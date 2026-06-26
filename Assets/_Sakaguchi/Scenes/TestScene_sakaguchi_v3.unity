@@ -7001,7 +7001,9 @@ MonoBehaviour:
   - {fileID: 710116628}
   - {fileID: 1844667884}
   - {fileID: 287211342}
+  gamePause: {fileID: 1285111476}
   isPaused: 0
+  isProcessing: 0
 --- !u!4 &163250826
 Transform:
   m_ObjectHideFlags: 0
@@ -8431,7 +8433,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 310157678}
-  - component: {fileID: 310157677}
+  - component: {fileID: 310157679}
   m_Layer: 0
   m_Name: PauseManager
   m_TagString: Untagged
@@ -8439,18 +8441,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &310157677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 310157676}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ced7d9c749bc1d468b5f8c6946317f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &310157678
 Transform:
   m_ObjectHideFlags: 0
@@ -8466,6 +8456,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &310157679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310157676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 351a8ff79bc05e24492cbc666d3e7a35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gamePause: {fileID: 1285111476}
+  reserveManager: {fileID: 163250825}
 --- !u!4 &310769887 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1978358115074897501, guid: 64189d66509631d49b71f4d5f609d5e6, type: 3}
@@ -19277,6 +19281,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1283595687}
   m_CullTransparentMesh: 1
+--- !u!1 &1285111475
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1285111477}
+  - component: {fileID: 1285111476}
+  m_Layer: 0
+  m_Name: GamePause
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1285111476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285111475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaf741d2f29727f41ba4bd30e45bf095, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isPaused: 0
+--- !u!4 &1285111477
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1285111475}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -17.043976, y: 33.239292, z: -42.969097}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1286162729
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28485,3 +28534,4 @@ SceneRoots:
   - {fileID: 611267531}
   - {fileID: 1280188064}
   - {fileID: 310157678}
+  - {fileID: 1285111477}

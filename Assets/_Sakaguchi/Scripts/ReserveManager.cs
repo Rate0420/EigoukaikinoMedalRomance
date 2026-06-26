@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ReserveManager : MonoBehaviour,IGamePausable
+public class ReserveManager : MonoBehaviour
 {
     [SerializeField] int maxReserve = 5;
     Queue<ReserveData> reserves = new Queue<ReserveData>();
@@ -15,7 +15,11 @@ public class ReserveManager : MonoBehaviour,IGamePausable
     [SerializeField] EffectManager effectManager;
     [SerializeField] GameObject[] ReserveObject;  // 0:現在消化中の保留、1~5:保留スロット
 
+    [SerializeField] GamePause gamePause;
+
+
     public bool isPaused = false;
+
 
     public void UpgradeReserve(int index)
     {
@@ -37,7 +41,12 @@ public class ReserveManager : MonoBehaviour,IGamePausable
         Gold
     }
 
-    bool isProcessing = false;
+    public bool isProcessing = false;
+
+    private void Start()
+    {
+        gamePause.OnPausedChange += ChangePause;
+    }
 
     private void Update()
     {
@@ -68,13 +77,13 @@ public class ReserveManager : MonoBehaviour,IGamePausable
 
     IEnumerator ProcessReserve()
     {
-        isProcessing = true;
+        
 
         while (reserves.Count > 0)
         {
 
             yield return new WaitUntil(() => !isPaused);
-            
+            isProcessing = true;
             DecidePreTargets();
 
             currentReserve = reserves.Dequeue();
@@ -85,9 +94,8 @@ public class ReserveManager : MonoBehaviour,IGamePausable
 
             currentReserve = null; // 終わったらクリア
             UpdateReserveVisuals();
+            isProcessing = false;
         }
-
-        isProcessing = false;
     }
 
     public void UpdateReserveVisuals()
@@ -185,14 +193,9 @@ public class ReserveManager : MonoBehaviour,IGamePausable
         return false;
     }
 
-    public void Pause()
+    public void ChangePause()
     { 
-        isPaused = true;
-    }
-
-    public void Resume()
-    { 
-        isPaused = false;
+        isPaused = gamePause.isPaused;
     }
 }
 
