@@ -12,6 +12,11 @@ namespace EMR.Medal
         /// </summary>
         public int Count { get; private set; }
 
+        /// <summary>
+        /// 消費したメダルの累計数
+        /// </summary>
+        public int ConsumedCount { get; private set; }
+
 
         /// <summary>
         /// 所持メダル数が変更されたときに呼び出されるイベント
@@ -83,7 +88,11 @@ namespace EMR.Medal
         {
             if (count < 0) throw new ArgumentException("減らす数は負の数にすることはできません", nameof(count));
 
-            Count = Math.Max(0, Count - count);
+            int removed = Math.Min(Count, count);
+
+            Count -= removed;
+            ConsumedCount += removed;
+
             OnCountChanged?.Invoke(Count);
         }
     }

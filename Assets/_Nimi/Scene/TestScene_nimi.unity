@@ -16555,6 +16555,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Collection Hole
       objectReference: {fileID: 0}
+    - target: {fileID: 7241398322343055628, guid: 64189d66509631d49b71f4d5f609d5e6, type: 3}
+      propertyPath: _ballTag
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
