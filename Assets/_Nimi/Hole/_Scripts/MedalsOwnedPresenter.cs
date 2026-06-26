@@ -11,7 +11,7 @@ namespace EMR.Medal.Hole
         {
             foreach (var hole in _collectionHole)
             {
-                hole.OnMedalCollected += OnMedalCollected;
+                hole.OnCollected += OnMedalCollected;
             }
         }
 
@@ -19,14 +19,14 @@ namespace EMR.Medal.Hole
         {
             foreach (var hole in _collectionHole)
             {
-                hole.OnMedalCollected -= OnMedalCollected;
+                hole.OnCollected -= OnMedalCollected;
             }
         }
 
 
-        void OnMedalCollected(Medal medal)
+        void OnMedalCollected(ICollectable collectable)
         {
-            GameState.Instance.OwnedModel.AddMedal(medal.Count);
+            GameState.Instance.OwnedModel.AddMedal(collectable.Count);
         }
     }
 };
