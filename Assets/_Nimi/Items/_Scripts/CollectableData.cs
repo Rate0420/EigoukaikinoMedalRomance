@@ -3,10 +3,17 @@ using UnityEngine;
 
 namespace EMR.Medal
 {
+    public enum CollectableType
+    {
+        Medal,
+        Ball,
+        Item,
+    }
 
     [Serializable]
-    public class MedalInfo
+    public class CollectableData
     {
+        [SerializeField] CollectableType _type;
         [SerializeField] string _name;
         [SerializeField] int _count = 1;
 

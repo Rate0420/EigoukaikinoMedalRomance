@@ -4,54 +4,53 @@ using UnityEngine;
 
 namespace EMR.Medal.Hole
 {
-    // メダルを判定するクラス
+    /// <summary>
+    /// 落ちた物を判定するクラス
+    /// </summary>
     public class CollectionHole : MonoBehaviour
     {
-        [SerializeField, Tag] string _medalTag = "Medal"; // メダルのタグ
         [SerializeField] bool _isJackSpot = false; // ジャックスポットかどうか
-        [SerializeField] bool _isCount = false; // カウントするかどうか
+        [SerializeField] bool _isCount = false;    // カウントするかどうか
         [SerializeField] ReserveManager reserveManager;
 
-
         /// <summary>
-        /// メダルを判定したときに発行されるイベント
+        /// 何かが判定されたときに発行されるイベント（引数を汎用的なICollectableに変更）
         /// </summary>
-        public event Action<Medal> OnMedalCollected;
+        public event Action<ICollectable> OnCollected;
 
         /// <summary>
-        /// メダルを判定したときに、メダルと当たったワールド座標を渡すイベント
+        /// 何かが判定されたときに、そのオブジェクトと当たったワールド座標を渡すイベント
         /// </summary>
-        public event Action<Medal, Vector3> OnMedalCollectedAt;
+        public event Action<ICollectable, Vector3> OnCollectedAt;
 
         /// <summary>
-        /// メダルが落ちた位置
+        /// オブジェクトが落ちた位置
         /// </summary>
         public Vector3 HitPosition { get; private set; }
 
 
+
         public void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag(_medalTag))
-            {
-                var medal = other.GetComponentInParent<Medal>();
-                if (medal != null)
-                {
-                    HitPosition = other.ClosestPoint(transform.position);
-                    medal.Collect();
+            // タグではなく、インターフェースを持っているかで判定
+            var collectable = other.GetComponentInParent<ICollectable>();
 
-                    if (_isCount)
-                    {
-                        OnMedalCollected?.Invoke(medal);
-                        OnMedalCollectedAt?.Invoke(medal, HitPosition);
-                    }
-                    if (_isJackSpot)
-                    {
-                        reserveManager?.AddReserve();
-                    }
-                }
-                else
+            if (collectable != null)
+            {
+                HitPosition = other.ClosestPoint(transform.position);
+
+                // アイテム側の消滅・回収処理を実行
+                collectable.Collect();
+
+                if (_isCount)
                 {
-                    Debug.LogWarning("メダルタグが付いているオブジェクトにMedalコンポーネントが見つかりませんでした", other.gameObject);
+                    OnCollected?.Invoke(collectable);
+                    OnCollectedAt?.Invoke(collectable, HitPosition);
+                }
+
+                if (_isJackSpot)
+                {
+                    reserveManager?.AddReserve();
                 }
             }
         }
