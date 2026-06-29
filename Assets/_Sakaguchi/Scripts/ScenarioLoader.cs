@@ -6,6 +6,7 @@ public class ScenarioLoader : MonoBehaviour
 {
     [SerializeField] GamePause gamePause;
     [SerializeField] ReserveManager reserveManager;
+    [SerializeField] GameObject MedalRoot;
 
     private void Update()
     {
@@ -15,7 +16,7 @@ public class ScenarioLoader : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.I))
         {
-            StartScenario("TestScene_sakaguchi_v3");
+            EndScenario("Sakaguchi_TestStoryScene");
         }
     }
 
@@ -36,6 +37,8 @@ public class ScenarioLoader : MonoBehaviour
         yield return SceneManager.LoadSceneAsync(
             sceneName,
             LoadSceneMode.Additive);
+        
+        MedalRoot.SetActive(false);
     }
 
     public void EndScenario(string sceneName)
@@ -46,7 +49,7 @@ public class ScenarioLoader : MonoBehaviour
     IEnumerator EndScenarioCoroutine(string sceneName)
     {
         yield return SceneManager.UnloadSceneAsync(sceneName);
-
+        MedalRoot.SetActive(true);
         gamePause.ChangePause(false);
     }
 }
