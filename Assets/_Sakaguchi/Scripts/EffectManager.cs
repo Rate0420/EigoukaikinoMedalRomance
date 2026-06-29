@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using static ReserveManager;
+using Unity.VisualScripting;
 
 public class EffectManager : MonoBehaviour
 {
@@ -105,8 +106,28 @@ public class EffectManager : MonoBehaviour
 
     public void PlayPreEffect()
     {
-        int r = Random.Range(0, 1);
-        StartCoroutine(preEffectPlayer.PlayVideoNoFadeCoroutine(r, 1f));
+        int r = Random.Range(0, preEffectPlayer.videoPaths.Length);
+        switch(r)
+        {
+            case 0:
+                Debug.Log($"[演出] 先読み: 白ほうき星");
+                StartCoroutine(preEffectPlayer.PlayVideoNoFadeCoroutine(r, 1f));
+                break;
+            case 1:
+                Debug.Log($"[演出] 先読み: 雪結晶");
+                StartCoroutine(preEffectPlayer.PlayVideoFadeInOut(r,1f,1,1));
+                break;
+            case 2:
+                Debug.Log($"[演出] 先読み: レンズフレア");
+                StartCoroutine(preEffectPlayer.PlayVideoNoFadeCoroutine(r, 1f));
+                break;
+            case 3:
+                Debug.Log($"[演出] 先読み: 光の風的な奴");
+                StartCoroutine(preEffectPlayer.PlayVideoNoFadeCoroutine(r, 1f));
+                break;
+        }
+
+        
     }
 
 }

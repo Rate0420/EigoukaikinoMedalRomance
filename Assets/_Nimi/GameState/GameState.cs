@@ -20,6 +20,11 @@ namespace EMR.Core
         /// </summary>
         public MedalRefundNotifier RefundNotifier { get; private set; }
 
+        /// <summary>
+        /// ポーズ管理用システム
+        /// </summary>
+        public GamePause GamePause { get; private set; }
+
 
         private void Awake()
         {
@@ -36,6 +41,7 @@ namespace EMR.Core
 
             OwnedModel = new MedalsOwnedModel(30);
             RefundNotifier = new MedalRefundNotifier();
+            GamePause = new GamePause();
 
             // 必要ならセーブデータから読み込み
             // OwnedModel.SetCount(SaveData.LoadMedalCount());

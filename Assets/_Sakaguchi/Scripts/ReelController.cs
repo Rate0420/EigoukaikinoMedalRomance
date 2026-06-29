@@ -43,6 +43,16 @@ public class ReelController : MonoBehaviour
         stopDecelerationMultiplier = decelMultiplier;
     }
 
+    public void ForceStop(int index)
+    {
+        targetIndex = (symbolCount + 1) - index;
+        currentIndex = targetIndex;
+        isSpinning = false;
+        isStopping = false;
+        currentSpeed = 0f;
+        ApplyPosition();
+    }
+
     void Update()
     {
         if (!isSpinning)

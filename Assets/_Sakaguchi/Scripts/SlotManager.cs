@@ -4,7 +4,9 @@ using static ReserveManager;
 
 public class SlotManager : MonoBehaviour
 {
-    [SerializeField] float winProbability = 0.5f; //当たりの確率
+    [SerializeField] float winProbability = 0.1f; //当たりの確率
+    [SerializeField] float chanceWinProbability = 0.3f; // 確変時の確率
+    [SerializeField] bool Kakuhen = false;
     [SerializeField] ReelManager reelManager; //リールの管理クラス
     [SerializeField] float slotEndDelay = 1.0f; //スロットが止まってから次の抽選までの遅延時間
     [SerializeField] EffectManager effectManager; // 演出管理クラス
@@ -12,6 +14,13 @@ public class SlotManager : MonoBehaviour
     bool isWin; //当たりかどうか
     int selectedNumber = 1; // ルートキャラに対応した数字(後で別のクラスから参照するように変更)
     public bool testflg;
+
+    int totalplayCount = 0;  // 現在の総回転数
+    int playCount = 0;       // 最後の当たりからの回転数
+    int StageChangeCount = 5; // ステージチェンジさせる回転数
+    [SerializeField] BackgroundManager bgManager;
+
+    [SerializeField] WinManager winManager;
 
     /*
      
@@ -75,7 +84,7 @@ public class SlotManager : MonoBehaviour
         if (resultNumber == -1)
         {
             // 外れでも1/4、もしくはキャラクターリーチ以上の演出ならリーチにする
-            if (Random.value < 0.25f || effect >= EffectType.CharacterReach)
+            if (Random.value < 0.1f || effect >= EffectType.CharacterReach)
             {
                 reach = true;
             }
@@ -175,30 +184,6 @@ public class SlotManager : MonoBehaviour
         return EffectType.None;
     }
 
-    float GetEffectWinRate(EffectType effect)
-    {
-        switch (effect)
-        {
-            case EffectType.None: return 0.05f;
-            case EffectType.NormalTalk: return 0.10f;
-            case EffectType.SetCharacterTalk: return 0.15f;
-
-            case EffectType.CharacterCutin: return 0.30f;
-            case EffectType.SetCharacterCutin: return 0.40f;
-            case EffectType.CharacterReach: return 0.35f;
-
-            case EffectType.SetCharacterReach: return 0.60f;
-            case EffectType.CharacterGroup: return 0.70f;
-
-            case EffectType.HighChanceReach: return 0.85f;
-            case EffectType.HighChanceSetCharacterReach: return 0.90f;
-
-            case EffectType.Freeze: return 1.0f;
-        }
-
-        return 0f;
-    }
-
     int GetRandomOtherNumber()
     {
         // 選択した数字以外の数字をランダムに返す（例えば1の場合は2,3,4,5,6,8,9の中から）
@@ -216,17 +201,35 @@ public class SlotManager : MonoBehaviour
         int resultNumber;
         float r = Random.value;
 
-        if (r < winProbability)
+        if (Kakuhen)
         {
-            resultNumber = GenerateResultNumber(); // 当たり
-            data.isReach = true; // ★確定でリーチ
+            if (r < chanceWinProbability)
+            {
+                resultNumber = GenerateResultNumber(); // 当たり
+                data.isReach = true; // ★確定でリーチ
+            }
+            else
+            {
+                resultNumber = -1;
+
+                // ★ここでリーチを決める（先に！）
+                data.isReach = Random.value < 0.25f;
+            }
         }
         else
         {
-            resultNumber = -1;
+            if (r < winProbability)
+            {
+                resultNumber = GenerateResultNumber(); // 当たり
+                data.isReach = true; // ★確定でリーチ
+            }
+            else
+            {
+                resultNumber = -1;
 
-            // ★ここでリーチを決める（先に！）
-            data.isReach = Random.value < 0.25f;
+                // ★ここでリーチを決める（先に！）
+                data.isReach = Random.value < 0.25f;
+            }
         }
 
         data.resultNumber = resultNumber;
@@ -307,10 +310,36 @@ public class SlotManager : MonoBehaviour
             reelManager.StartStopReels(reel);
 
             yield return new WaitUntil(() =>
-    !reelManager.leftReel.IsSpinning &&
-    !reelManager.centerReel.IsSpinning &&
-    !reelManager.rightReel.IsSpinning
-);
+                !reelManager.leftReel.IsSpinning &&
+                !reelManager.centerReel.IsSpinning &&
+                !reelManager.rightReel.IsSpinning
+            );
+
+            // ★ここが重要（当たり処理）
+            if (data.resultNumber != -1 && data.resultNumber != 7)
+            {
+                // 保留停止
+                reserveManager.isPaused = true;
+
+                // 当たり演出
+                yield return StartCoroutine(winManager.PlayWin(data.resultNumber));
+
+                // 再開
+                reserveManager.isPaused = false;
+            }
+
+            // とりあえずresultnumが７の場合も処理する
+            if (data.resultNumber == 7)
+            {
+                // 保留停止
+                reserveManager.isPaused = true;
+
+                // 当たり演出
+                yield return StartCoroutine(winManager.PlayWin(data.resultNumber));
+
+                // 再開
+                reserveManager.isPaused = false;
+            }
 
             yield return new WaitForSeconds(slotEndDelay);
 
@@ -332,8 +361,17 @@ public class SlotManager : MonoBehaviour
             }
 
             Coroutine effectCoroutine = null;
-            int[] reels = GenerateReelResult(data.resultNumber,data.isReach);
-            if(data.effect == EffectType.Freeze) reels = GenerateReelResult(7, true); // フリーズなら必ず7にする
+            int[] reels;
+            if (data.effect == EffectType.Freeze)
+            {
+                data.resultNumber = 7;
+                reels = GenerateReelResult(7, true);
+            }
+            else
+            {
+                reels = GenerateReelResult(data.resultNumber, data.isReach);
+            }
+            
             Debug.Log("ランク:" + data.rank + "演出:" + data.effect);
             reelManager.StartReels();
             if (data.effect != EffectType.None)
@@ -357,9 +395,79 @@ public class SlotManager : MonoBehaviour
 
             yield return new WaitForSeconds(slotEndDelay);
 
+            // 当たってた場合ここで当たりの演出をやる
+
+            // dataの当たりに応じて確変か確変じゃないかを決める
+            // 7以外の奇数(1,3,5,9)だった場合、確変フラグをオンにする
+           
+            // 当たりの場合
+            if(data.resultNumber != -1)
+            {
+                if(data.resultNumber == 7)
+                {
+                    // JPC処理
+                }
+                // 7以外の奇数(1,3,5,9)だった場合、確変フラグをオンにする
+                if (data.resultNumber % 2 == 1)
+                {
+                    Kakuhen = true;
+                    // 確変ステージに移行させる
+                    bgManager.ChangeStage(StageType.Special);
+                    playCount = 0;
+                }
+                else
+                {
+                    // 現在確変中だったら通常ステージに戻す
+                    if (Kakuhen)
+                    {
+                        bgManager.ChangeStage((StageType)Random.Range(0, (int)StageType.Special));
+                    }
+                    Kakuhen = false;
+                    playCount = 0;
+                }
+
+                if (data.resultNumber != -1 && data.resultNumber != 7)
+                {
+                    // 保留停止
+                    reserveManager.isPaused = true;
+
+                    // 当たり演出
+                    yield return StartCoroutine(winManager.PlayWin(data.resultNumber));
+
+                    // 再開
+                    reserveManager.isPaused = false;
+                }
+
+                // とりあえずresultnumが７の場合も処理する
+                if (data.resultNumber == 7)
+                {
+                    // 保留停止
+                    reserveManager.isPaused = true;
+
+                    // 当たり演出
+                    yield return StartCoroutine(winManager.PlayWin(data.resultNumber));
+
+                    // 再開
+                    reserveManager.isPaused = false;
+                }
+            }
+
             if (preEffectCoroutine != null)
             {
                 StopCoroutine(preEffectCoroutine);
+            }
+
+            playCount++;
+            totalplayCount++;
+
+            if (playCount != 0 && !Kakuhen)
+            {
+                Debug.Log($"現在の回転数: {playCount}");
+                if (playCount % StageChangeCount == 0)
+                {
+                    // enumの最初から最後を除いたものの中からランダムにステージを選ぶ
+                    bgManager.ChangeStage((StageType)Random.Range(0, (int)StageType.Special));
+                }
             }
         }
     }
