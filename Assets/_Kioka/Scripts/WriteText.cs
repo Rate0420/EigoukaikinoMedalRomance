@@ -1,12 +1,14 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class WriteText : MonoBehaviour
 {
     [SerializeField] private StoryData storyData;           // スクリプタブルオブジェクト
     [SerializeField] private SetStoryUI setStoryUI;         // SetStoryUIスクリプト
     [SerializeField] private ChooseManager chooseManager;   // ChooseManagerスクリプト
+    [SerializeField] private BackLogManager backLogManager; // BackLogManagerスクリプト
 
     [SerializeField] private TextMeshProUGUI massageText;   // メッセージテキスト
     [SerializeField] private GameObject image;              // Aボタンの画像
@@ -22,6 +24,10 @@ public class WriteText : MonoBehaviour
     private bool isFast;        // 早送りかどうかの判別
     private bool isDrawing;     // メッセージを書いているどうかの判別(連打防止)
 
+
+    private string currentMessage; // 今表示してる文章
+    private int currentLength;     // 表示済み文字数
+
     private void Start()
     {
         storyData = DontDestroyStory.instance.story;
@@ -34,31 +40,42 @@ public class WriteText : MonoBehaviour
     private void Update()
     {
         // 選択肢イベントが発生していないときのみ文字送り
-        if(chooseManager.isEvent == false)
+        if (chooseManager.isEvent == false)
         {
             //
             // ここのFire1,Fire2を変える とりあえず||使ってキーマウに対応させる
             //
-            // テキストを表示　左クリックorSpaceキー
-            if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
+            // バックログを表示していないときのみテキストを表示
+            // 左クリックorSpaceキー
+            if (backLogManager.isBackLog == false)
             {
-                DrawText();
-                image.SetActive(false);     // Aボタンの画像を非表示にする
-            }
-            // 早送り右クリックor左シフトキー
-            if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                if (!isFast)
+                if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
                 {
-                    isFast = true;      // 早送り
-                    textSpeed = 0.04f;
-                    anim.SetBool("ScaleBool", true);    // アニメーション再生
+                    // 直前にバックログを閉じるボタンを押していたら実行しない
+                    if (backLogManager.isClick)
+                    {
+                        backLogManager.isClick = false;
+                        return;
+                    }
+
+                    DrawText();
+                    image.SetActive(false);     // Aボタンの画像を非表示にする
                 }
-                else
+                // 早送り右クリックor左シフトキー
+                if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftShift))
                 {
-                    isFast = false;     // 元の速さに戻す
-                    textSpeed = 0.1f;
-                    anim.SetBool("ScaleBool", false);   // アニメーション停止
+                    if (!isFast)
+                    {
+                        isFast = true;      // 早送り
+                        textSpeed = 0.04f;
+                        anim.SetBool("ScaleBool", true);    // アニメーション再生
+                    }
+                    else
+                    {
+                        isFast = false;     // 元の速さに戻す
+                        textSpeed = 0.1f;
+                        anim.SetBool("ScaleBool", false);   // アニメーション停止
+                    }
                 }
             }
         }
@@ -69,7 +86,7 @@ public class WriteText : MonoBehaviour
     /// </summary>
     public void DrawText()
     {
-        if (isDrawing) 
+        if (isDrawing)
         {
             // 文字を出している最中に連打された場合は、文字をすべて表示する
             StopAllCoroutines();    // コルーチンを停止
@@ -79,7 +96,6 @@ public class WriteText : MonoBehaviour
             image.SetActive(true);
             isDrawing = false;
         }
-
         else if (index < storyData.text.Length)
         {
             StopAllCoroutines();        // 連打対策
@@ -109,11 +125,19 @@ public class WriteText : MonoBehaviour
     private IEnumerator CorDrawText(string massage)
     {
         if (isDrawing) yield break;
+
         isDrawing = true;
         setStoryUI.ChangeNameAndSprite();
         float time = 0f;
         while (true)
         {
+            // バックログ表示中は一時停止
+            if (backLogManager.isBackLog)
+            {
+                yield return null;
+                continue;
+            }
+
             yield return null;
             time += Time.deltaTime;
             int length = Mathf.FloorToInt(time / textSpeed);
@@ -124,7 +148,7 @@ public class WriteText : MonoBehaviour
         massageText.text = massage;
         yield return null;
 
-        index++; 
+        index++;
 
         image.SetActive(true);
         isDrawing = false;

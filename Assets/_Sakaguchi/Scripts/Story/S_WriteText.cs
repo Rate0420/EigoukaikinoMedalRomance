@@ -70,10 +70,22 @@ public class S_WriteText : MonoBehaviour
         {
             // 書いている最中 → 全文一括表示
             StopAllCoroutines();
-            messageText.text = storyData.Get(Index).text;
+            var currentEntry = storyData.Get(Index);
+            messageText.text = currentEntry.text;
             isDrawing = false;
-            Index++;
-            ShowNextArrow();
+
+            // nextIndex が指定されていれば自動ジャンプ
+            if (currentEntry.HasJump)
+            {
+                Index = currentEntry.nextIndex;
+                HideNextArrow();
+                BeginEntry(Index);
+            }
+            else
+            {
+                Index++;
+                ShowNextArrow();
+            }
             return;
         }
 
@@ -151,9 +163,22 @@ public class S_WriteText : MonoBehaviour
         messageText.text = message;
         yield return null;
 
-        Index++;
         isDrawing = false;
-        ShowNextArrow();
+
+        // nextIndex が指定されていれば自動ジャンプ（次へボタンを押さずに飛ぶ）
+        // nextIndex = -1 なら通常通り Index+1 へ進んで矢印を出して待機
+        if (entry.HasJump)
+        {
+            // 自動ジャンプは入力でなくコードから呼ぶため inputBlocked は不要
+            Index = entry.nextIndex;
+            HideNextArrow();
+            BeginEntry(Index);
+        }
+        else
+        {
+            Index++;
+            ShowNextArrow();
+        }
     }
 
     private void ShowNextArrow() { if (nextArrowImage != null) nextArrowImage.SetActive(true); }
