@@ -13,6 +13,7 @@ namespace EMR.Medal.Refund
     /// </summary>
     public class MedalRefundBehaviour : MonoBehaviour
     {
+        [SerializeField] Transform _root;
         [SerializeField] MedalRefundSpawner[] _spawner;
         [SerializeField] ProbabilitySelector<GameObject> _enemySelector;
 
@@ -63,7 +64,7 @@ namespace EMR.Medal.Refund
                     MedalRefundSpawner spawner = _spawner[Random.Range(0, _spawner.Length)];
                     GameObject prefab = _enemySelector.GetRandom();
 
-                    spawner.SpawnMedal(prefab);
+                    spawner.SpawnMedal(prefab, _root);
 
                     _refundNotifier.RemoveRefund(1);
 
@@ -71,6 +72,8 @@ namespace EMR.Medal.Refund
                     OnMedalSpawned?.Invoke(_refundNotifier.RefundAmount);
 
                     await UniTask.Delay(System.TimeSpan.FromSeconds(0.25f));
+
+                    await UniTask.WaitUntil(() => !GameState.Instance.GamePause.isPaused);
                 }
             }
             catch (System.Exception exception)

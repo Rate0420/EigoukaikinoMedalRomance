@@ -31,7 +31,7 @@ namespace EMR.Medal.Refund
         /// メダルを生成してランダムな力を与える
         /// </summary>
         /// <param name="prefab">生成するメダルPrefab</param>
-        public void SpawnMedal(GameObject prefab)
+        public void SpawnMedal(GameObject prefab, Transform root)
         {
             Quaternion rotation = Quaternion.Euler(_rotate);
 
@@ -52,7 +52,9 @@ namespace EMR.Medal.Refund
                 spawnPosition,
                 rotation);
 
-            medal.transform.SetParent(_root);
+            if (root == null) root = _root;
+
+            medal.transform.SetParent(root);
 
             // Rigidbodyがあれば力を加える
             if (medal.TryGetComponent<Rigidbody>(out var rb))

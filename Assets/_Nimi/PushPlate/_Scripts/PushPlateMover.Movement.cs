@@ -8,13 +8,41 @@ namespace EMR.PushPlate
     // 移動関連の処理
     public partial class PushPlateMover
     {
+        // ループ制御用のCancellationTokenSource
+        private CancellationTokenSource _loopCts;
+
+        /// <summary>
+        /// 動きを開始するメソッド
+        /// </summary>
         private void StartMoveLoop()
         {
-            MoveLoopAsync(this.GetCancellationTokenOnDestroy()).Forget();
+            // 既に動いている場合は二重起動を防ぐために一度止める
+            StopMoveLoop();
+
+            // 新しいCancellationTokenSourceを作成
+            // GameObjectが破棄されたとき（OnDestroy）にも自動でキャンセルされるようにリンクさせる
+            _loopCts = CancellationTokenSource.CreateLinkedTokenSource(this.GetCancellationTokenOnDestroy());
+
+            MoveLoopAsync(_loopCts.Token).Forget();
         }
+
+        /// <summary>
+        /// 動きを停止させるメソッド
+        /// </summary>
+        private void StopMoveLoop()
+        {
+            if (_loopCts != null)
+            {
+                _loopCts.Cancel();
+                _loopCts.Dispose();
+                _loopCts = null;
+            }
+        }
+
 
         private async UniTaskVoid MoveLoopAsync(CancellationToken cancellationToken)
         {
+            // ループの開始前と各ステップで、キャンセル要求が来ていないかチェックする
             while (!cancellationToken.IsCancellationRequested)
             {
                 if (!CanMove())

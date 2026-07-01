@@ -43,9 +43,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8376625000210871995}
   serializedVersion: 4
-  m_Mass: 3
+  m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.15
+  m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -75,6 +75,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _info:
+    _type: 0
     _name: 
     _count: 1
 --- !u!114 &1514385730370551525
@@ -101,7 +102,7 @@ PrefabInstance:
     - target: {fileID: 2250259033864184545, guid: 6c2927c240e39364890f804eb715be1a, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 100445401980789372, guid: acf9ec1b797b2434d9df83a6683bc6da, type: 3}
+      objectReference: {fileID: 7012272646099699852, guid: acf9ec1b797b2434d9df83a6683bc6da, type: 3}
     - target: {fileID: 7843745338297988302, guid: 6c2927c240e39364890f804eb715be1a, type: 3}
       propertyPath: m_Materials.Array.size
       value: 2
@@ -114,6 +115,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
       objectReference: {fileID: 2100000, guid: e99afe4cfccc2c747afed98e135d308f, type: 2}
+    - target: {fileID: 8094027811248265129, guid: 6c2927c240e39364890f804eb715be1a, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8636330288807351579, guid: 6c2927c240e39364890f804eb715be1a, type: 3}
       propertyPath: m_Name
       value: Medal

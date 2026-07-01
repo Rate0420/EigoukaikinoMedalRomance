@@ -1,5 +1,6 @@
 using UnityEngine;
 using EMR.Utility;
+using EMR.Core;
 
 namespace EMR.PushPlate
 {
@@ -52,7 +53,28 @@ namespace EMR.PushPlate
 
         private void Start()
         {
+            GameState.Instance.GamePause.OnPausedChange += PausedChenge;
             StartMoveLoop();
+        }
+
+        private void OnEnable()
+        {
+            GameState.Instance.GamePause.OnPausedChange -= PausedChenge;
+        }
+
+        /// <summary>
+        /// ポーズ中は動かないようにしたい
+        /// </summary>
+        private void PausedChenge()
+        {
+            if (GameState.Instance.GamePause.isPaused)
+            {
+                StartMoveLoop();
+            }
+            else
+            {
+                StopMoveLoop();
+            }
         }
 
 
