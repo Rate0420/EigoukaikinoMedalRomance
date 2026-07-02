@@ -1222,7 +1222,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   storyData: {fileID: 0}
   writeText: {fileID: 2122193209}
-  affinityManager: {fileID: 946415717}
   twoChoiceGroup: {fileID: 6540668693004977589}
   twoChoiceBtns:
   - {fileID: 7767161859873053315}
@@ -1232,6 +1231,7 @@ MonoBehaviour:
   - {fileID: 1142430932}
   - {fileID: 99941564}
   - {fileID: 520957433}
+  resourceUI: {fileID: 0}
 --- !u!1 &742259843
 GameObject:
   m_ObjectHideFlags: 0
@@ -1751,7 +1751,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b036f9934676c548b763b9cfbd36be8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  affinity: 0
 --- !u!114 &946415718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1764,7 +1763,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c3e32037c8d4504e9d47c948561fcc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  story: {fileID: 11400000, guid: 10b96343339c2d14bb00db787a910662, type: 2}
+  story: {fileID: 11400000, guid: 3759df1bf24fb2c47ad2ef978bdb1d87, type: 2}
 --- !u!4 &946415719
 Transform:
   m_ObjectHideFlags: 0

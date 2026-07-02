@@ -23,6 +23,10 @@ public class S_ChooseManager : MonoBehaviour
     [SerializeField] private CanvasGroup threeChoiceGroup;
     [SerializeField] private List<Button> threeChoiceBtns;
 
+    [Header("ミニイベント用リソースUI")]
+    [Tooltip("ミニイベント時に選択肢と一緒に表示する所持金などのUIオブジェクト")]
+    [SerializeField] private GameObject resourceUI;
+
     public bool IsShowingChoices { get; private set; } = false;
 
     private int currentEntryIndex = -1;
@@ -60,6 +64,10 @@ public class S_ChooseManager : MonoBehaviour
 
         currentEntryIndex = entryIndex;
         IsShowingChoices = true;
+
+        // ミニイベントなら選択肢と同時にリソースUIを表示する
+        if (storyData.isMiniEvent && resourceUI != null)
+            resourceUI.SetActive(true);
 
         int count = entry.choices.Count;
         if (count == 2)
@@ -162,6 +170,7 @@ public class S_ChooseManager : MonoBehaviour
     private void HideAll()
     {
         currentFirstBtn = null;
+        if (resourceUI != null) resourceUI.SetActive(false);
         Hide(twoChoiceGroup);
         Hide(threeChoiceGroup);
     }

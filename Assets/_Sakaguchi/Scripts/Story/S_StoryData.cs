@@ -8,6 +8,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "S_StoryData", menuName = "Game/S_StoryData")]
 public class S_StoryData : ScriptableObject
 {
+    [Header("ミニイベントか（true = ミニイベント / false = 本編）")]
+    public bool isMiniEvent = false;
+
     [Header("ストーリーエントリ一覧")]
     public List<StoryEntry> entries;
 
@@ -93,6 +96,10 @@ public class S_StoryData : ScriptableObject
 
         [Header("ステータス変化リスト（複数キャラ・複数ステータスに同時対応）")]
         public List<StatusDelta> statusDeltas;
+
+        [Header("ミニイベント用：この選択肢を強化するのに必要なリソース消費量（0 = 消費なし）")]
+        [Tooltip("0より大きい値を設定した場合、リソースを消費して効果を強化する選択肢になる")]
+        public int resourceCost = 0;
     }
 
     // ============================================================
