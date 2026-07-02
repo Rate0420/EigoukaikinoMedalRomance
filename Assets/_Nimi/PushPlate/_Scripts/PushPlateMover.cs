@@ -1,6 +1,7 @@
 using UnityEngine;
 using EMR.Utility;
 using EMR.Core;
+using UnityEngine.UIElements;
 
 namespace EMR.PushPlate
 {
@@ -57,9 +58,9 @@ namespace EMR.PushPlate
             StartMoveLoop();
         }
 
-        private void OnEnable()
+        private void OnDisable()
         {
-            GameState.Instance.GamePause.OnPausedChange -= PausedChenge;
+                GameState.Instance.GamePause.OnPausedChange -= PausedChenge;   
         }
 
         /// <summary>

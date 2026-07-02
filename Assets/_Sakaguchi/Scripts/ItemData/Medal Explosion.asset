@@ -15,4 +15,3 @@ MonoBehaviour:
   explosionForce: 2000
   explosionRadius: 25
   upwardsModifier: 2
-  explosionChance: 0.5
