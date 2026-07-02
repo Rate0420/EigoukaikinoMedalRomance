@@ -57,7 +57,7 @@ namespace EMR.PushPlate
             StartMoveLoop();
         }
 
-        private void OnEnable()
+        private void OnDisable()
         {
             GameState.Instance.GamePause.OnPausedChange -= PausedChenge;
         }

@@ -4959,6 +4959,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5079750002562404790, guid: 63733b258ec5f35438d88209c36e6ad6, type: 3}
+      propertyPath: m_Radius
+      value: 1.0029622
+      objectReference: {fileID: 0}
+    - target: {fileID: 5079750002562404790, guid: 63733b258ec5f35438d88209c36e6ad6, type: 3}
+      propertyPath: m_Center.z
+      value: 0.000000029802322
+      objectReference: {fileID: 0}
     - target: {fileID: 5700148113186277887, guid: 63733b258ec5f35438d88209c36e6ad6, type: 3}
       propertyPath: m_Name
       value: Ball
