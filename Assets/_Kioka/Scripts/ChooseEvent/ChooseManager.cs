@@ -4,7 +4,6 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class ChooseManager : MonoBehaviour
 {
@@ -17,16 +16,14 @@ public class ChooseManager : MonoBehaviour
     [SerializeField] private GameObject twoFirstBtn;        // 最初に選択状態にするボタン
     [SerializeField] private GameObject threeFirstBtn;      // 最初に選択状態にするボタン
     [SerializeField] private GameObject textBtn;            // 選択肢を押した後に選択状態にするボタン
-    [SerializeField] private Button backLogBtn;
-    [SerializeField] private Button twoBtn;
-    [SerializeField] private Button threeBtn;
 
     private int[] number;                                   // 選択肢イベント実行時のストーリーインデックス番号
     private int eventIndex;                                 // 何番目の選択肢イベントか
     private HashSet<int> usedIndexes = new HashSet<int>();  // 使われたindexを入れる
 
     private bool isHide;                                    // ボタンを表示するか判定
-    public bool isEvent = false;                            // 選択肢イベントが発生しているか判別
+    public bool isEvent;                                    // 選択肢イベントが発生しているか判別
+    public bool isTwoBtn;                                   // 選択肢ボタンが2個か3個か
 
     void Start()
     {
@@ -46,12 +43,6 @@ public class ChooseManager : MonoBehaviour
         // この処理を1回だけ行う
         if (isEvent) return;
 
-        // Buttonコンポーネントを取得
-        Selectable selectable = backLogBtn.GetComponent<Selectable>();
-        // Navigation構造体を取得
-        Navigation nav = selectable.navigation;
-        nav.selectOnDown = null;  // バックログボタンからの移動先ボタンを設定
-
         // indexとnumberの番号が同じで、まだ処理していない場合だけ表示
         // Containsで同じ数字が含まれているか判別
         if (number.Contains(writeText.index) && !usedIndexes.Contains(writeText.index))
@@ -63,18 +54,17 @@ public class ChooseManager : MonoBehaviour
             // 選択肢2個
             if (count == 2)
             {
+                isTwoBtn = true;
                 HideBtn(twoChooseBtns);                                     // 2個の選択肢ボタン表示
                 EventSystem.current.SetSelectedGameObject(twoFirstBtn);     // 選択状態のボタンを設定
-                nav.selectOnLeft = twoBtn;  // バックログボタンからの移動先ボタンを設定
             }
             // 選択肢3個
             else if (count == 3)
             {
+                isTwoBtn = false;
                 HideBtn(threeChooseBtns);                                   // 3個の選択肢ボタン表示
                 EventSystem.current.SetSelectedGameObject(threeFirstBtn);   // 選択状態のボタンを設定
-                nav.selectOnLeft = threeBtn;    // バックログボタンからの移動先ボタンを設定
             }
-            selectable.navigation = nav;    // 変更をコンポーネントに反映
         }
     }
 

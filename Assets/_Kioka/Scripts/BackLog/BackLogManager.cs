@@ -1,14 +1,18 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class BackLogManager : MonoBehaviour
 {
     [SerializeField] private ChooseManager chooseManager;   // ChooseManagerスクリプト
 
-    [SerializeField] private GameObject backLog;
-    [SerializeField] private GameObject backLogBtn;
-    [SerializeField] private GameObject closeBtn;
-    [SerializeField] private GameObject textBtn;
+    // オブジェクト、ボタン
+    [SerializeField] private GameObject backLog;    // 会話履歴オブジェクト
+    [SerializeField] private GameObject backLogBtn; // 会話履歴表示ボタン
+    [SerializeField] private GameObject closeBtn;   // 会話履歴閉じるボタン
+    [SerializeField] private GameObject textBtn;    // テキストボタン(ストーリー中もBackLogBtnにNavigationできるように)
+    [SerializeField] private Button twoBtn;         // 2個の選択肢ボタン
+    [SerializeField] private Button threeBtn;       // 3個の選択肢ボタン
 
     public bool isBackLog;  // バックログが表示されているか判定
     public bool isClick;    // 閉じるボタンを押したか判定
@@ -17,8 +21,6 @@ public class BackLogManager : MonoBehaviour
     {
         backLog.SetActive(false);   // バックログ非表示
         EventSystem.current.SetSelectedGameObject(textBtn); // テキストボタンを最初に選択
-        isBackLog = false;
-        isClick = false;
     }
 
     /// <summary>
@@ -50,7 +52,18 @@ public class BackLogManager : MonoBehaviour
         }
     }
 
-    void Update()
+    private void Update()
     {
+        // Buttonコンポーネントを取得
+        Selectable backLogSele = backLogBtn.GetComponent<Selectable>();
+        // Navigation構造体を取得
+        Navigation backLogNav = backLogSele.navigation;
+
+        // バックログボタンからの移動先ボタンを設定
+        if (chooseManager.isTwoBtn == true) backLogNav.selectOnLeft = twoBtn;
+        else if (chooseManager.isTwoBtn == false) backLogNav.selectOnLeft = threeBtn;
+
+        // 変更をコンポーネントに反映
+        backLogSele.navigation = backLogNav;
     }
 }

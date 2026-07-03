@@ -9,6 +9,7 @@ public class WriteText : MonoBehaviour
     [SerializeField] private SetStoryUI setStoryUI;         // SetStoryUIスクリプト
     [SerializeField] private ChooseManager chooseManager;   // ChooseManagerスクリプト
     [SerializeField] private BackLogManager backLogManager; // BackLogManagerスクリプト
+    [SerializeField] private CreateBackLog createBackLog;   // CreateBackLogスクリプト
 
     [SerializeField] private TextMeshProUGUI massageText;   // メッセージテキスト
     [SerializeField] private GameObject image;              // Aボタンの画像
@@ -23,10 +24,6 @@ public class WriteText : MonoBehaviour
 
     private bool isFast;        // 早送りかどうかの判別
     private bool isDrawing;     // メッセージを書いているどうかの判別(連打防止)
-
-
-    private string currentMessage; // 今表示してる文章
-    private int currentLength;     // 表示済み文字数
 
     private void Start()
     {
@@ -91,6 +88,7 @@ public class WriteText : MonoBehaviour
             // 文字を出している最中に連打された場合は、文字をすべて表示する
             StopAllCoroutines();    // コルーチンを停止
             massageText.text = storyData.text[index];   // すべての文字を表示
+            createBackLog.CreateLog(index);             // 会話履歴のログ作成
             index++;
 
             image.SetActive(true);
@@ -146,6 +144,9 @@ public class WriteText : MonoBehaviour
         }
 
         massageText.text = massage;
+
+        createBackLog.CreateLog(index);     // 会話履歴のログ作成
+
         yield return null;
 
         index++;
