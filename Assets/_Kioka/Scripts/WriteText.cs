@@ -91,7 +91,6 @@ public class WriteText : MonoBehaviour
             createBackLog.CreateLog(index);             // ‰ï˜b—š—ğ‚ÌƒƒOì¬
             index++;
 
-            image.SetActive(true);
             isDrawing = false;
         }
         else if (index < storyData.text.Length)
