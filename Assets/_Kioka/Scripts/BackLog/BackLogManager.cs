@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.UI;
 
 public class BackLogManager : MonoBehaviour
@@ -54,6 +55,10 @@ public class BackLogManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Z)) OnBackLogBtn(0);
+
+        if (Input.GetKeyDown(KeyCode.X))OnBackLogBtn(1);
+
         // Buttonコンポーネントを取得
         Selectable backLogSele = backLogBtn.GetComponent<Selectable>();
         // Navigation構造体を取得

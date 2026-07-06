@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class GamePause : MonoBehaviour
+public class GamePause
 {
     public bool isPaused;
 

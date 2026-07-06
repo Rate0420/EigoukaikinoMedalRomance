@@ -29,6 +29,9 @@ public class S_ChooseManager : MonoBehaviour
 
     public bool IsShowingChoices { get; private set; } = false;
 
+    /// <summary> 現在表示中の選択肢数（BackLogManager のNavigation設定に使用）</summary>
+    public int CurrentChoiceCount { get; private set; } = 0;
+
     private int currentEntryIndex = -1;
 
     // 選択肢表示中にフォーカスを維持するための参照
@@ -36,8 +39,10 @@ public class S_ChooseManager : MonoBehaviour
 
     // ----------------------------------------------------------------
 
-    private void Start()
+    private void Awake()
     {
+        // Start より早い Awake で初期化することで、WriteText の Start から
+        // ShowChoices が呼ばれる前に storyData が確実にセットされる
         storyData = S_DontDestroyStory.instance.story;
         HideAll();
     }
@@ -70,6 +75,7 @@ public class S_ChooseManager : MonoBehaviour
             resourceUI.SetActive(true);
 
         int count = entry.choices.Count;
+        CurrentChoiceCount = count;
         if (count == 2)
         {
             SetupButtons(twoChoiceBtns, entry.choices);
@@ -170,6 +176,7 @@ public class S_ChooseManager : MonoBehaviour
     private void HideAll()
     {
         currentFirstBtn = null;
+        CurrentChoiceCount = 0;
         if (resourceUI != null) resourceUI.SetActive(false);
         Hide(twoChoiceGroup);
         Hide(threeChoiceGroup);

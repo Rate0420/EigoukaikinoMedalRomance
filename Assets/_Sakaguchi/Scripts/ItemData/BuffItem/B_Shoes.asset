@@ -15,6 +15,9 @@ MonoBehaviour:
   itemType: 4
   itemName: "\u30B9\u30DD\u30FC\u30C4\u5E97\u306E\u9774"
   description: "\u76E4\u9762\u306E\u6469\u64E6\u3092\u4E0B\u3052\u308B"
-  icon: {fileID: 0}
+  cost: 100
+  icon: {fileID: 21300000, guid: c984d5072e1dd694ba2de831fb587fcb, type: 3}
+  buttonIconPrefab: {fileID: 4892959137503164888, guid: 10d4b88b45feb0a40bf62ff4d7ea74bc, type: 3}
+  detailIconPrefab: {fileID: 4892959137503164888, guid: 10d4b88b45feb0a40bf62ff4d7ea74bc, type: 3}
   effect: {fileID: 0}
   isConsumable: 0

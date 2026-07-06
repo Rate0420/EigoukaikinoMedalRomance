@@ -13,24 +13,28 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject[] menuButtons;  // ボタン
     [SerializeField] private GameObject[] menuPanels;   // パネル
 
-    [SerializeField] private Image buckButton;  // 戻るボタン
+    [SerializeField] private Image backButton;  // 戻るボタン
+    [SerializeField] private GameObject buckButton2;
     [SerializeField] private GameObject sceneChangeImage;
     [SerializeField] private GameObject sceneCharaImage;
+
+    [SerializeField] private SceneChanger changer;
 
     private Color DefaultColor =        // ボタンの初期色
         new Color32(255, 255, 255, 255);
     private Color SelectColor =         // ボタン選択中色
         new Color32(255, 45, 235, 255);
 
-    public int nowPanleNo = -1;     // 現在開いているパネル番号
+    public int nowPanelNo = -1;     // 現在開いているパネル番号
 
     public bool isPanelFlg;
     public bool isMenuFlg;  // メニューパネル表示フラグ
-    public bool isLBFlg;    // 追加パネル表示用フラグ
+    public bool isLBOpen;   // 追加パネル表示用フラグ
 
     private PanelAni[] panelAnis;     // パネルアニメーション用
     private PanelAniZoom zoomPanelAni;  // 拡大縮小用アニメーション
-    [SerializeField] private GameObject buckButton2;
+
+    private const int IsLikeabilityPanelIndex = 5;
 
     private void Awake()
     {
@@ -58,7 +62,7 @@ public class MenuManager : MonoBehaviour
     {
         buckButton2.SetActive(false);
         isMenuFlg = false;
-        isLBFlg = false;
+        isLBOpen = false;
         characterImage.Route();
         statusGet.SetStatus();
         characterImage.MainImageChange();
@@ -68,53 +72,35 @@ public class MenuManager : MonoBehaviour
     /// 初期ボタンのパネル切り替え
     /// </summary>
     public void OnMeunButtons(int buttonNo)
-    {   
-        switch (buttonNo)
+    {
+        // メニューパネル非表示
+        if (buttonNo == 0)
+            PanelReset();
+        else
         {
-            case 0: // メニューパネル非表示
-                PanelReset(buttonNo);
-                break;
-            case 1: // ステータスパネル
-                PanelSet(buttonNo);
-                break;
-            case 2: // キャラ解説パネル
-                PanelSet(buttonNo);
-                break;
-            case 3: // セーブパネル
-                PanelSet(buttonNo);
-                break;
-            case 4: // 音量設定パネル
-                PanelSet(buttonNo);
-                break;
-            case 5: // 好感度一覧
-                PanelSet(buttonNo);
-                break;
-            case 99:
-                PanelSet(buttonNo);
-                break;
-        }
-
-        // 色変更
-        if(buttonNo > 0)
+            // 1:ステータスパネル 2:キャラ解説パネル 3:セーブパネル
+            // 4:音量設定パネル 5:好感度一覧
+            PanelSet(buttonNo);
             BuckButtonChange();
+        }
     }
 
     /// <summary>
     /// パネルの非表示
     /// </summary>
-    private void PanelReset(int buttonNo)
+    private void PanelReset()
     {
-        if (isLBFlg)    // 好感度パネル
+        if (isLBOpen)    // 好感度パネル
         {
-            panelAnis[5].Close();
-            isLBFlg = false;
+            panelAnis[IsLikeabilityPanelIndex].Close();
+            isLBOpen = false;
         }
         else if (isMenuFlg) // パネル全般の切り替え
         {
-            panelAnis[nowPanleNo].Close();
-            nowPanleNo = -1;
+            panelAnis[nowPanelNo].Close();
+            nowPanelNo = -1;
 
-            buckButton.color = DefaultColor;
+            backButton.color = DefaultColor;
             buckButton2.SetActive(false);
             isMenuFlg = false;
         }
@@ -123,6 +109,8 @@ public class MenuManager : MonoBehaviour
             sceneChangeImage.SetActive(true);
             zoomPanelAni.MenuPanelChange();
             isPanelFlg = false;
+
+            changer.EndMenu();
         }
     }
 
@@ -132,30 +120,32 @@ public class MenuManager : MonoBehaviour
     /// <param name="buttonNo"></param>
     private void PanelSet(int buttonNo)
     {
-        if (buttonNo == 99)
-        {
-            isPanelFlg = true;
-            buttonNo = 6;
-        }
+        //if (buttonNo == IsOpenMenu)
+        //{
+        //    isPanelFlg = true;
+        //    buttonNo = 6;
+        //    Debug.Log("OpenMenu");
+        //}
 
         if (!isMenuFlg)
         {
-            nowPanleNo = buttonNo;
+            nowPanelNo = buttonNo;
             panelAnis[buttonNo].Open();
             isMenuFlg = true;
         }
-
-        if (buttonNo == 5)
+        // 好感度パネル
+        else if (buttonNo == IsLikeabilityPanelIndex)
         {
             panelAnis[buttonNo].Open();
-            isLBFlg = true;
+            isLBOpen = true;
+            Debug.Log("好感度");
         }
     }
 
     // 戻るボタンの色変更
     private void BuckButtonChange()
     {
-        buckButton.color = SelectColor;
+        backButton.color = SelectColor;
         buckButton2.SetActive(true);
     }
 }
