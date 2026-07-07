@@ -56,6 +56,13 @@ public class WriteText : MonoBehaviour
         // 左クリックorSpaceキー
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
         {
+            // 直前に会話履歴を表示していたら実行しない
+            if (backLogButton.isClick)
+            {
+                backLogButton.isClick = false;
+                return;
+            }
+
             DrawText();
         }
         // 早送り右クリックor左シフトキー
@@ -87,6 +94,8 @@ public class WriteText : MonoBehaviour
     /// </summary>
     private void CompleteCurrentMessage()
     {
+        
+
         // 文字を出している最中に連打された場合は、文字をすべて表示する
         StopAllCoroutines();                        // コルーチンを停止
         messageText.text = storyData.text[index];   // すべての文字を表示

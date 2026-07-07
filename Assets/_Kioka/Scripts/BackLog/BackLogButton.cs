@@ -14,6 +14,7 @@ public class BackLogButton : MonoBehaviour
     [SerializeField] private Button threeBtn;               // 3個の選択肢ボタン
 
     public bool isBackLog;  // バックログが表示されているか判定
+    public bool isClick;    // 閉じるボタンが押されたか判定
 
     void Start()
     {
@@ -35,6 +36,8 @@ public class BackLogButton : MonoBehaviour
     /// </summary>
     public void OnCloseBtn()
     {
+        isClick = true;
+
         // 会話履歴ログ非表示、textボタンを最初に選択
         SetGameObject(false, textBtn);
 
