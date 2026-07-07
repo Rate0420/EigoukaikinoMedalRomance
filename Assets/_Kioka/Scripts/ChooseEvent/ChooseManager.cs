@@ -10,6 +10,7 @@ public class ChooseManager : MonoBehaviour
     [SerializeField] private TalkEvent talkEvent;           // TalkEventスクリプタブルオブジェクト
     [SerializeField] private WriteText writeText;           // WriteTextスクリプト
     [SerializeField] private SendChooseData sendChooseData; // SendChooseDataスクリプト
+    [SerializeField] private BackLogButton backLogButton;   // BackLogButtonスクリプト
 
     [SerializeField] private CanvasGroup twoChooseBtns;     // 2個の選択肢のボタンまとめたもの
     [SerializeField] private CanvasGroup threeChooseBtns;   // 3個の選択肢のボタンまとめたもの
@@ -21,18 +22,16 @@ public class ChooseManager : MonoBehaviour
     private int eventIndex;                                 // 何番目の選択肢イベントか
     private HashSet<int> usedIndexes = new HashSet<int>();  // 使われたindexを入れる
 
-    private bool isHide;                                    // ボタンを表示するか判定
     public bool isEvent;                                    // 選択肢イベントが発生しているか判別
     public bool isTwoBtn;                                   // 選択肢ボタンが2個か3個か
 
     void Start()
     {
         number = talkEvent.number;
-        isHide = true;  // ボタン非表示
 
         // 選択肢ボタン非表示
-        HideBtn(twoChooseBtns);
-        HideBtn(threeChooseBtns);
+        SetButtonVisible(twoChooseBtns, true);
+        SetButtonVisible(threeChooseBtns, true);
     }
 
     /// <summary>
@@ -48,21 +47,22 @@ public class ChooseManager : MonoBehaviour
         if (number.Contains(writeText.index) && !usedIndexes.Contains(writeText.index))
         {
             isEvent = true;                                                 // 選択肢イベント実行
-            isHide = false;                                                 // ボタン表示
             int count = talkEvent.events[eventIndex].choices.Length;        // 選択肢が何個あるか数える
 
             // 選択肢2個
             if (count == 2)
             {
                 isTwoBtn = true;
-                HideBtn(twoChooseBtns);                                     // 2個の選択肢ボタン表示
+                backLogButton.NavigationButton();                           // ボタンの遷移先を設定
+                SetButtonVisible(twoChooseBtns, false);                     // 2個の選択肢ボタン表示
                 EventSystem.current.SetSelectedGameObject(twoFirstBtn);     // 選択状態のボタンを設定
             }
             // 選択肢3個
             else if (count == 3)
             {
                 isTwoBtn = false;
-                HideBtn(threeChooseBtns);                                   // 3個の選択肢ボタン表示
+                backLogButton.NavigationButton();                           // ボタンの遷移先を設定
+                SetButtonVisible(threeChooseBtns, false);                   // 3個の選択肢ボタン表示
                 EventSystem.current.SetSelectedGameObject(threeFirstBtn);   // 選択状態のボタンを設定
             }
         }
@@ -74,11 +74,10 @@ public class ChooseManager : MonoBehaviour
     public void OnChooseButton(int chooseIndex)
     {
         isEvent = false;    // 選択肢イベント終了
-        isHide = true;      // ボタン非表示
 
         // 選択肢ボタン非表示
-        HideBtn(twoChooseBtns);
-        HideBtn(threeChooseBtns);
+        SetButtonVisible(twoChooseBtns, true);
+        SetButtonVisible(threeChooseBtns, true);
 
         EventSystem.current.SetSelectedGameObject(textBtn);   // 選択状態のボタンを設定
 
@@ -95,9 +94,9 @@ public class ChooseManager : MonoBehaviour
     /// ボタン表示・非表示
     /// </summary>
     /// <param name="cg"></param>
-    public void HideBtn(CanvasGroup cg)
+    public void SetButtonVisible(CanvasGroup cg, bool hide)
     {
-        if (isHide == true)
+        if (hide == true)
         {
             cg.alpha = 0;               // ボタン非表示
             cg.interactable = false;    // ボタンを押せないようにする
@@ -106,7 +105,7 @@ public class ChooseManager : MonoBehaviour
         else
         {
             cg.alpha = 1;               // ボタン表示
-            cg.interactable = true;     // 押せるようにする
+            cg.interactable = true;     // ボタンを押せるようにする
             cg.blocksRaycasts = true;   // マウスのクリックで押せるようにする
         }
     }

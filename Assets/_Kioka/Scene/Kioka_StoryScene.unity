@@ -365,7 +365,7 @@ GameObject:
   - component: {fileID: 96323319}
   - component: {fileID: 96323318}
   m_Layer: 5
-  m_Name: MassageText
+  m_Name: MessageText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1367,7 +1367,7 @@ GameObject:
   - component: {fileID: 612361843}
   - component: {fileID: 612361842}
   m_Layer: 5
-  m_Name: MassagePanel
+  m_Name: MessagePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1479,6 +1479,7 @@ MonoBehaviour:
   talkEvent: {fileID: 11400000, guid: 25b8bf2d248723449988cfabeb75d4ef, type: 2}
   writeText: {fileID: 2122193209}
   sendChooseData: {fileID: 664773315}
+  backLogButton: {fileID: 6616045903220917187}
   twoChooseBtns: {fileID: 6540668693004977589}
   threeChooseBtns: {fileID: 853245948}
   twoFirstBtn: {fileID: 5954862442655111422}
@@ -3162,7 +3163,6 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8872078823257283542}
   - {fileID: 1354832527}
   - {fileID: 817144636}
   - {fileID: 1502341033}
@@ -3171,8 +3171,9 @@ RectTransform:
   - {fileID: 174450050}
   - {fileID: 1534901222239440360}
   - {fileID: 853245945}
-  - {fileID: 7807496979232358367}
   - {fileID: 1410518467}
+  - {fileID: 7807496979232358367}
+  - {fileID: 8872078823257283542}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3246,14 +3247,13 @@ MonoBehaviour:
   storyData: {fileID: 11400000, guid: a5021e32bca2dfd49827660fa0b86656, type: 2}
   setStoryUI: {fileID: 2122193208}
   chooseManager: {fileID: 664773313}
-  backLogManager: {fileID: 6616045903220917188}
+  backLogButton: {fileID: 6616045903220917187}
   createBackLog: {fileID: 6616045903220917189}
-  massageText: {fileID: 96323318}
   image: {fileID: 1539653502}
   fastUI: {fileID: 174450049}
-  scene: []
+  messageText: {fileID: 96323318}
   anim: {fileID: 174450053}
-  textSpeed: 0.1
+  scene: []
   index: 0
 --- !u!224 &114526986491492827
 RectTransform:
@@ -3696,8 +3696,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6616045903220917187}
         m_TargetAssemblyTypeName: BackLogButton, Assembly-CSharp
-        m_MethodName: OnClickButton
-        m_Mode: 3
+        m_MethodName: OnCloseBtn
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4276,8 +4276,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6616045903220917187}
         m_TargetAssemblyTypeName: BackLogButton, Assembly-CSharp
-        m_MethodName: OnClickButton
-        m_Mode: 3
+        m_MethodName: OnBackLogBtn
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -4448,7 +4448,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4cfb079b39911048b5d60ece2ca6ac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backLogManager: {fileID: 6616045903220917188}
+  chooseManager: {fileID: 664773313}
+  backLog: {fileID: 6715996101490305974}
+  backLogBtn: {fileID: 6628084398185718457}
+  closeBtn: {fileID: 3080363209750134160}
+  textBtn: {fileID: 1410518466}
+  twoBtn: {fileID: 7767161859873053315}
+  threeBtn: {fileID: 1142430932}
+  isBackLog: 0
 --- !u!114 &6616045903220917188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4456,7 +4463,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5738232568392739535}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c6c65da3a5ca5cc4493a489e32afd6e9, type: 3}
   m_Name: 
@@ -4484,7 +4491,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   storyData: {fileID: 11400000, guid: a5021e32bca2dfd49827660fa0b86656, type: 2}
   content: {fileID: 6418250162331288166}
-  logPre: {fileID: 7150541393070772124, guid: b51228697f186344cb54f4879b62ed8e, type: 3}
+  logPre: {fileID: 2145029364569685892, guid: b51228697f186344cb54f4879b62ed8e, type: 3}
 --- !u!1 &6628084398185718457
 GameObject:
   m_ObjectHideFlags: 0
@@ -4920,7 +4927,7 @@ Animator:
   m_GameObject: {fileID: 6628084398185718457}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: e40460c44b0d095488d9e1feb75f49c8, type: 2}
+  m_Controller: {fileID: 9100000, guid: c3b97df26712348498d0a1ea8d6537cd, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

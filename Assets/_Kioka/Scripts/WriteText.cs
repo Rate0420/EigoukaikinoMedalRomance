@@ -1,29 +1,32 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class WriteText : MonoBehaviour
 {
     [SerializeField] private StoryData storyData;           // スクリプタブルオブジェクト
     [SerializeField] private SetStoryUI setStoryUI;         // SetStoryUIスクリプト
     [SerializeField] private ChooseManager chooseManager;   // ChooseManagerスクリプト
-    [SerializeField] private BackLogManager backLogManager; // BackLogManagerスクリプト
+    [SerializeField] private BackLogButton backLogButton;   // BackLogButtonスクリプト
     [SerializeField] private CreateBackLog createBackLog;   // CreateBackLogスクリプト
 
-    [SerializeField] private TextMeshProUGUI massageText;   // メッセージテキスト
     [SerializeField] private GameObject image;              // Aボタンの画像
     [SerializeField] private GameObject fastUI;             // 早送りの画像、テキスト
-    [SerializeField] private string[] scene;                // シーン名
+
+    [SerializeField] private TextMeshProUGUI messageText;   // メッセージテキスト
     [SerializeField] private Animator anim;                 // アニメーター
+    [SerializeField] private string[] scene;                // シーン名
 
-    [SerializeField] private float textSpeed = 0.1f;        // テキストの速さ
+    private const float NORMAL_SPEED = 0.1f;                // 通常時の文字送りの速さ
+    private const float FAST_SPEED = 0.04f;                 // 早送り時の文字送りの速さ
 
-    bool isSceneChange;                                     // シーン遷移の判別
-    public int index = 0;
+    private float textSpeed = NORMAL_SPEED;                 // 文字送りの速さ
 
+    private bool isSceneChange; // シーン遷移の判別
     private bool isFast;        // 早送りかどうかの判別
     private bool isDrawing;     // メッセージを書いているどうかの判別(連打防止)
+
+    public int index = 0;
 
     private void Start()
     {
@@ -36,90 +39,93 @@ public class WriteText : MonoBehaviour
 
     private void Update()
     {
-        // 選択肢イベントが発生していないときのみ文字送り
-        if (chooseManager.isEvent == false)
-        {
-            //
-            // ここのFire1,Fire2を変える とりあえず||使ってキーマウに対応させる
-            //
-            // バックログを表示していないときのみテキストを表示
-            // 左クリックorSpaceキー
-            if (backLogManager.isBackLog == false)
-            {
-                if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
-                {
-                    // 直前にバックログを閉じるボタンを押していたら実行しない
-                    if (backLogManager.isClick)
-                    {
-                        backLogManager.isClick = false;
-                        return;
-                    }
+        HandleInput();
+    }
 
-                    DrawText();
-                    image.SetActive(false);     // Aボタンの画像を非表示にする
-                }
-                // 早送り右クリックor左シフトキー
-                if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftShift))
-                {
-                    if (!isFast)
-                    {
-                        isFast = true;      // 早送り
-                        textSpeed = 0.04f;
-                        anim.SetBool("ScaleBool", true);    // アニメーション再生
-                    }
-                    else
-                    {
-                        isFast = false;     // 元の速さに戻す
-                        textSpeed = 0.1f;
-                        anim.SetBool("ScaleBool", false);   // アニメーション停止
-                    }
-                }
-            }
+    /// <summary>
+    /// 文字を画面に反映させる
+    /// </summary>
+    public void HandleInput()
+    {
+        // 選択肢と会話履歴ログが非表示のときのみ文字表示
+        if (chooseManager.isEvent) return;
+        if (backLogButton.isBackLog) return;
+        //
+        // とりあえず||使ってキーマウに対応させる
+        //
+        // 左クリックorSpaceキー
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
+        {
+            DrawText();
+        }
+        // 早送り右クリックor左シフトキー
+        if (Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            ChangeFastMode(!isFast);
         }
     }
 
     /// <summary>
-    /// メッセージを表示する
+    /// 文字を書き出す
     /// </summary>
-    public void DrawText()
+    private void DrawText()
     {
-        if (isDrawing)
+        if (isDrawing)  // 文字書き出し中
         {
-            // 文字を出している最中に連打された場合は、文字をすべて表示する
-            StopAllCoroutines();    // コルーチンを停止
-            massageText.text = storyData.text[index];   // すべての文字を表示
-            createBackLog.CreateLog(index);             // 会話履歴のログ作成
-            index++;
-
-            isDrawing = false;
+            CompleteCurrentMessage();
+            return;
         }
-        else if (index < storyData.text.Length)
+        if (index < storyData.text.Length)  // 全ての文字を出し終わったとき
         {
-            StopAllCoroutines();        // 連打対策
-            massageText.text = "";      // 初期化
-            StartCoroutine(CorDrawText(storyData.text[index]));
+            StartNextMessage();
+            return;
         }
-        // ストーリー終了時
-        else if (index >= storyData.text.Length)
-        {
-            anim.SetBool("ScaleBool", false);   // アニメーション停止
+        ChangeScene();
+    }
+    /// <summary>
+    /// 文字をすべて表示
+    /// </summary>
+    private void CompleteCurrentMessage()
+    {
+        // 文字を出している最中に連打された場合は、文字をすべて表示する
+        StopAllCoroutines();                        // コルーチンを停止
+        messageText.text = storyData.text[index];   // すべての文字を表示
+        createBackLog.CreateLog(index);             // 会話履歴のログ作成
+        image.SetActive(true);                      // Aボタンの画像を表示する
+        index++;
 
-            //
-            // ここのFire1を変える
-            //
-            // 右クリックorスペースキーでシーン遷移
-            if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && !isSceneChange)
-            {
-                FadeSceneChanger.ChangeScene(scene[0]);
-                isSceneChange = true;
-            }
+        isDrawing = false;
+    }
+    /// <summary>
+    /// 次のインデックスの文字を表示
+    /// </summary>
+    private void StartNextMessage()
+    {
+        image.SetActive(false);     // Aボタンの画像を非表示にする
+
+        StopAllCoroutines();        // 連打対策
+        messageText.text = "";      // 初期化
+        StartCoroutine(CorDrawText(storyData.text[index])); // 文字送り
+    }
+    /// <summary>
+    /// シーン遷移
+    /// </summary>
+    private void ChangeScene()
+    {
+        if (isSceneChange) return;
+        anim.SetBool("ScaleBool", false);   // アニメーション停止
+
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
+        {
+            FadeSceneChanger.ChangeScene(scene[0]);
+            isSceneChange = true;
         }
     }
 
     /// <summary>
     /// 1文字ずつ表示するためのコルーチン
     /// </summary>
-    private IEnumerator CorDrawText(string massage)
+    private IEnumerator CorDrawText(string message)
     {
         if (isDrawing) yield break;
 
@@ -129,7 +135,7 @@ public class WriteText : MonoBehaviour
         while (true)
         {
             // バックログ表示中は一時停止
-            if (backLogManager.isBackLog)
+            if (backLogButton.isBackLog)
             {
                 yield return null;
                 continue;
@@ -138,11 +144,11 @@ public class WriteText : MonoBehaviour
             yield return null;
             time += Time.deltaTime;
             int length = Mathf.FloorToInt(time / textSpeed);
-            if (length > massage.Length) break;
-            massageText.text = massage.Substring(0, length);
+            if (length > message.Length) break;
+            messageText.text = message.Substring(0, length);
         }
 
-        massageText.text = massage;
+        messageText.text = message;
 
         createBackLog.CreateLog(index);     // 会話履歴のログ作成
 
@@ -150,7 +156,18 @@ public class WriteText : MonoBehaviour
 
         index++;
 
-        image.SetActive(true);
+        image.SetActive(true);  // Aボタンの画像を表示する
         isDrawing = false;
+    }
+
+    /// <summary>
+    /// 早送り
+    /// </summary>
+    /// <param name="fast"></param>
+    private void ChangeFastMode(bool fast)
+    {
+        isFast = fast;
+        textSpeed = fast ? FAST_SPEED : NORMAL_SPEED;   // trueなら早送り、falseなら通常速度
+        anim.SetBool("ScaleBool", fast);    // アニメーション
     }
 }

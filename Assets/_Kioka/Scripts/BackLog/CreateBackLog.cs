@@ -11,7 +11,7 @@ public class CreateBackLog : MonoBehaviour
     [SerializeField] private GameObject logPre;     // ログのプレハブ
 
     private TextMeshProUGUI nameText;               // 名前テキスト
-    private TextMeshProUGUI massageText;            // メッセージテキスト
+    private TextMeshProUGUI messageText;            // メッセージテキスト
 
     private string[] name;  // 名前配列
     private string[] text;  // メッセージ配列
@@ -40,10 +40,10 @@ public class CreateBackLog : MonoBehaviour
         GameObject obj = Instantiate(logPre, content.transform);    
 
         // プレハブからテキスト取得
-        massageText = obj.transform.Find("MassageText").GetComponent<TextMeshProUGUI>();
+        messageText = obj.transform.Find("MessageText").GetComponent<TextMeshProUGUI>();
         nameText = obj.transform.Find("NameText").GetComponent<TextMeshProUGUI>();
         // テキスト更新
-        massageText.text = storyData.text[index];
+        messageText.text = storyData.text[index];
         nameText.text = storyData.name[index];
     }
 }
