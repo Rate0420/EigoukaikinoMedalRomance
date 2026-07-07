@@ -2,11 +2,9 @@ using UnityEngine;
 
 public class VerticalShaking_process : MonoBehaviour
 {
-    public GameObject UI;
     public GameObject MedalDai;
     public GameObject Field;
 
-    Vector3 uiPos;
     Vector3 daiPos;
     Vector3 fieldPos;
 

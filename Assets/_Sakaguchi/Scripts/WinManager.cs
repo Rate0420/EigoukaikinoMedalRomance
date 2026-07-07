@@ -12,9 +12,12 @@ public class WinManager : MonoBehaviour
 
     [SerializeField] MedalRefundBehaviour refundBehaviour;
 
+    public bool isPayout = false;
+
 
     public IEnumerator PlayWin(int resultNumber)
     {
+        isPayout = true;
         // ‡@ ‰‰o“®‰æ
         yield return videoPlayer.PlayVideoNoFadeCoroutine(0, 1.0f);
 
@@ -68,7 +71,7 @@ public class WinManager : MonoBehaviour
         }
 
         winUI.SetActive(false);
-
+        isPayout = false;
     }
 
     int GetPayout(int number)

@@ -118,8 +118,9 @@ namespace EMR.Medal.Launch
         {
             if (Input.GetMouseButtonDown(0))
             {
-                if (GameState.Instance.OwnedModel.Count > 0 || !GameState.Instance.GamePause.isPaused)
+                if (GameState.Instance.OwnedModel.Count > 0 && !GameState.Instance.GamePause.isPaused)
                 {
+                    Debug.Log(GameState.Instance.GamePause.isPaused);
                     Launch();
                     GameState.Instance.OwnedModel.RemoveMedal();
                 }

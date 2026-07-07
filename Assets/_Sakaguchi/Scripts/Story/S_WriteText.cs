@@ -16,6 +16,10 @@ public class S_WriteText : MonoBehaviour
     [SerializeField] private float textSpeed = 0.1f;
     [SerializeField] private float fastTextSpeed = 0.04f;
 
+    [Header("バックログ")]
+    [SerializeField] private S_CreateBackLog createBackLog;
+    [SerializeField] private S_BackLogManager backLogManager;
+
     public int Index { get; private set; } = 0;
 
     private bool isFast;
@@ -48,6 +52,7 @@ public class S_WriteText : MonoBehaviour
     {
         if (inputBlocked) return;
         if (chooseManager.IsShowingChoices) return;
+        if (backLogManager != null && backLogManager.isBackLog) return;
 
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
             OnAdvanceInput();
@@ -68,12 +73,30 @@ public class S_WriteText : MonoBehaviour
 
         if (isDrawing)
         {
-            // 書いている最中 → 全文一括表示
+            // 書いている最中 → コルーチンを止めて全文一括表示
+            // ※ StopAllCoroutines でループ以降のCreateLog等が実行されなくなるため
+            //    ここで明示的に呼び出す
+            int snapIndex = Index;  // StopAllCoroutines前にIndexを退避
             StopAllCoroutines();
-            messageText.text = storyData.Get(Index).text;
+            var currentEntry = storyData.Get(snapIndex);
+            messageText.text = currentEntry.text;
             isDrawing = false;
-            Index++;
-            ShowNextArrow();
+
+            // コルーチンが処理するはずだったCreateLogをここで実行
+            createBackLog?.CreateLog(snapIndex);
+
+            // nextIndex が指定されていれば自動ジャンプ
+            if (currentEntry.HasJump)
+            {
+                Index = currentEntry.nextIndex;
+                HideNextArrow();
+                BeginEntry(Index);
+            }
+            else
+            {
+                Index++;
+                ShowNextArrow();
+            }
             return;
         }
 
@@ -120,6 +143,19 @@ public class S_WriteText : MonoBehaviour
         BeginEntry(Index);
     }
 
+    /// <summary> 外部から1フレームだけ入力をブロックする（BackLogManager等から呼ぶ）</summary>
+    public void BlockInputOneFrame()
+    {
+        StartCoroutine(BlockOneFrame());
+    }
+
+    private IEnumerator BlockOneFrame()
+    {
+        inputBlocked = true;
+        yield return null;
+        inputBlocked = false;
+    }
+
     // ----------------------------------------------------------------
 
     private IEnumerator CorDrawText(int entryIndex)
@@ -151,9 +187,25 @@ public class S_WriteText : MonoBehaviour
         messageText.text = message;
         yield return null;
 
-        Index++;
         isDrawing = false;
-        ShowNextArrow();
+
+        // バックログに登録（選択肢エントリは登録しない）
+        createBackLog?.CreateLog(entryIndex);
+
+        // nextIndex が指定されていれば自動ジャンプ（次へボタンを押さずに飛ぶ）
+        // nextIndex = -1 なら通常通り Index+1 へ進んで矢印を出して待機
+        if (entry.HasJump)
+        {
+            // 自動ジャンプは入力でなくコードから呼ぶため inputBlocked は不要
+            Index = entry.nextIndex;
+            HideNextArrow();
+            BeginEntry(Index);
+        }
+        else
+        {
+            Index++;
+            ShowNextArrow();
+        }
     }
 
     private void ShowNextArrow() { if (nextArrowImage != null) nextArrowImage.SetActive(true); }
