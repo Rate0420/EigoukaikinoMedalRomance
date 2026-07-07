@@ -22,6 +22,8 @@ public class SlotManager : MonoBehaviour
 
     [SerializeField] WinManager winManager;
 
+    public bool IsBusy { get; private set; } = false;
+
     /*
      
     ・Weak（ほぼ外れ）
@@ -76,6 +78,13 @@ public class SlotManager : MonoBehaviour
     }
 
     EffectType effect;
+
+    public IEnumerator PlaySlot(ReserveData data)
+    {
+        IsBusy = true;
+        yield return PlaySlotInternal(data);
+        IsBusy = false;  // 何があっても必ずここに来る
+    }
 
     int[] GenerateReelResult(int resultNumber,bool reach)
     {
@@ -288,8 +297,10 @@ public class SlotManager : MonoBehaviour
         return false;
     }
 
-    public IEnumerator PlaySlot(ReserveData data)
+    public IEnumerator PlaySlotInternal(ReserveData data)
     {
+        IsBusy = true;  // ← 先頭に追加
+
         // テストフラグが立っている場合は、常に会話演出にする
         if (testflg)
         {
@@ -347,6 +358,7 @@ public class SlotManager : MonoBehaviour
             {
                 StopCoroutine(preEffectCoroutine);
             }
+            IsBusy = false;
         }
 
         else
@@ -469,6 +481,7 @@ public class SlotManager : MonoBehaviour
                     bgManager.ChangeStage((StageType)Random.Range(0, (int)StageType.Special));
                 }
             }
+            IsBusy = false;
         }
     }
 

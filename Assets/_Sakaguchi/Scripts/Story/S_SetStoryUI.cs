@@ -30,12 +30,10 @@ public class S_SetStoryUI : MonoBehaviour
     {
         if (char1Img != null) char1Rect = char1Img.GetComponent<RectTransform>();
         if (char2Img != null) char2Rect = char2Img.GetComponent<RectTransform>();
-    }
 
-    private void Start()
-    {
         storyData = S_DontDestroyStory.instance.story;
     }
+
 
     // ----------------------------------------------------------------
 

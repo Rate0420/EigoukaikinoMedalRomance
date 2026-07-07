@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using EMR.Core;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -15,11 +16,42 @@ public class ReserveManager : MonoBehaviour
     [SerializeField] EffectManager effectManager;
     [SerializeField] GameObject[] ReserveObject;  // 0:現在消化中の保留、1~5:保留スロット
 
-    [SerializeField] GamePause gamePause;
+    private GamePause gamePause;
 
 
     public bool isPaused = false;
 
+    // 保留と保留の間（次の消化前の待機中）かどうか
+    public bool isBetweenReserves { get; private set; } = false;
+    // 外部から「今すぐ止めていい」と伝えるフラグ
+    public bool pauseRequested = false;
+
+    IEnumerator ProcessReserve()
+    {
+        isProcessing = true;
+
+        while (reserves.Count > 0)
+        {
+            isBetweenReserves = true;
+
+            // ポーズ要求があれば、解除されるまでここで待機
+            yield return new WaitUntil(() => !isPaused && !pauseRequested);
+
+            isBetweenReserves = false;
+
+            DecidePreTargets();
+            currentReserve = reserves.Dequeue();
+            UpdateReserveVisuals();
+
+            yield return slotManager.PlaySlot(currentReserve);
+
+            currentReserve = null;
+            UpdateReserveVisuals();
+        }
+
+        isBetweenReserves = true;
+        isProcessing = false;
+    }
 
     public void UpgradeReserve(int index)
     {
@@ -45,6 +77,7 @@ public class ReserveManager : MonoBehaviour
 
     private void Start()
     {
+        gamePause = GameState.Instance.GamePause;
         gamePause.OnPausedChange += ChangePause;
     }
 
@@ -75,28 +108,6 @@ public class ReserveManager : MonoBehaviour
 
     }
 
-    IEnumerator ProcessReserve()
-    {
-        
-
-        while (reserves.Count > 0)
-        {
-
-            yield return new WaitUntil(() => !isPaused);
-            isProcessing = true;
-            DecidePreTargets();
-
-            currentReserve = reserves.Dequeue();
-
-            UpdateReserveVisuals();
-
-            yield return slotManager.PlaySlot(currentReserve);
-
-            currentReserve = null; // 終わったらクリア
-            UpdateReserveVisuals();
-            isProcessing = false;
-        }
-    }
 
     public void UpdateReserveVisuals()
     {
