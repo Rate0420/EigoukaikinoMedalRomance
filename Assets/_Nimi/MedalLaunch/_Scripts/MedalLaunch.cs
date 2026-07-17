@@ -120,9 +120,9 @@ namespace EMR.Medal.Launch
             {
                 if (GameState.Instance.OwnedModel.Count > 0 && !GameState.Instance.GamePause.isPaused)
                 {
-                    Debug.Log(GameState.Instance.GamePause.isPaused);
                     Launch();
                     GameState.Instance.OwnedModel.RemoveMedal();
+                    GameState.Instance.RoundService.AddConsumedMedals(1);
                 }
             }
         }
