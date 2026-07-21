@@ -82,20 +82,28 @@ public class S_WriteText : MonoBehaviour
             messageText.text = currentEntry.text;
             isDrawing = false;
 
-            // コルーチンが処理するはずだったCreateLogをここで実行
-            createBackLog?.CreateLog(snapIndex);
-
-            // nextIndex が指定されていれば自動ジャンプ
-            if (currentEntry.HasJump)
+            // テキスト出し終わった後の処理を再現する
+            if (currentEntry.HasChoices)
             {
-                Index = currentEntry.nextIndex;
-                HideNextArrow();
-                BeginEntry(Index);
+                // 選択肢エントリ：全文表示してから選択肢を出す
+                chooseManager.ShowChoices(snapIndex);
             }
             else
             {
-                Index++;
-                ShowNextArrow();
+                // 通常テキスト：バックログ登録してから次へ
+                createBackLog?.CreateLog(snapIndex);
+
+                if (currentEntry.HasJump)
+                {
+                    Index = currentEntry.nextIndex;
+                    HideNextArrow();
+                    BeginEntry(Index);
+                }
+                else
+                {
+                    Index++;
+                    ShowNextArrow();
+                }
             }
             return;
         }
@@ -165,14 +173,7 @@ public class S_WriteText : MonoBehaviour
         var entry = storyData.Get(entryIndex);
         setStoryUI.Apply(entryIndex);
 
-        if (entry.HasChoices)
-        {
-            messageText.text = entry.text;
-            chooseManager.ShowChoices(entryIndex);  // IsShowingChoices=true を先に立てる
-            isDrawing = false;
-            yield break;
-        }
-
+        // テキストを1文字ずつ表示（選択肢エントリも通常テキストも同じルートを通す）
         string message = entry.text;
         float time = 0f;
         while (true)
@@ -189,6 +190,13 @@ public class S_WriteText : MonoBehaviour
 
         isDrawing = false;
 
+        // テキストを出し終わった後で選択肢を表示する
+        if (entry.HasChoices)
+        {
+            chooseManager.ShowChoices(entryIndex);
+            yield break;
+        }
+
         // バックログに登録（選択肢エントリは登録しない）
         createBackLog?.CreateLog(entryIndex);
 
@@ -196,7 +204,6 @@ public class S_WriteText : MonoBehaviour
         // nextIndex = -1 なら通常通り Index+1 へ進んで矢印を出して待機
         if (entry.HasJump)
         {
-            // 自動ジャンプは入力でなくコードから呼ぶため inputBlocked は不要
             Index = entry.nextIndex;
             HideNextArrow();
             BeginEntry(Index);

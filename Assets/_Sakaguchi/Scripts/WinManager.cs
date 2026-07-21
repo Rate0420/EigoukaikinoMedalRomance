@@ -11,6 +11,7 @@ public class WinManager : MonoBehaviour
     [SerializeField] VideoEffectPlayer videoPlayer;
 
     [SerializeField] MedalRefundBehaviour refundBehaviour;
+    [SerializeField] PriseGenerator priseGenerator;
 
     public bool isPayout = false;
 
@@ -70,6 +71,9 @@ public class WinManager : MonoBehaviour
             Debug.LogWarning($"{nameof(WinManager)}: Refund did not finish within {timeout:0.0} seconds. Resuming slot processing.");
         }
 
+        // ボール、プライズ等の判定
+        priseGenerator.DisChargeBall();
+        priseGenerator.PriseLottely();
         winUI.SetActive(false);
         isPayout = false;
     }

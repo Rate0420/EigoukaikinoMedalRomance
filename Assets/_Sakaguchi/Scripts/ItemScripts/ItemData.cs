@@ -19,12 +19,12 @@ public class ItemData : ScriptableObject
     // 詳細画面に表示するアイコン(Sprite)
     public Sprite icon;
 
-    // ショップ一覧のボタンに表示するPrefab
-    public GameObject buttonIconPrefab;
-
     // 購入時にInventoryへ追加し、ゲーム中に効果を発揮する
     public ItemEffect effect;
 
     // 消費アイテムかどうか
     public bool isConsumable;
+
+    // アイテムレベル
+    public int level;
 }

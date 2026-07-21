@@ -15,6 +15,7 @@ public class CroonHole : MonoBehaviour
         {
             Debug.Log("Ball entered hole " + holeIndex);
             // ボールがこの穴に入ったとき、BounderスクリプトのholeOccupied配列の対応するインデックスをtrueにする
+            if(bounder != null)
             bounder.holeOccupied[holeIndex] = true;
         }
     }
@@ -25,6 +26,7 @@ public class CroonHole : MonoBehaviour
         {
             Debug.Log("Ball exited hole " + holeIndex);
             // ボールがこの穴から出たとき、BounderスクリプトのholeOccupied配列の対応するインデックスをfalseにする
+            if(bounder!=null)
             bounder.holeOccupied[holeIndex] = false;
         }
     }

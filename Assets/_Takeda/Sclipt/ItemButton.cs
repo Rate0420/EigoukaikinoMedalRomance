@@ -1,61 +1,45 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class ItemButton : MonoBehaviour
 {
-    [HideInInspector]
-    public ItemData itemData;
+    [SerializeField] Image icon;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private TMP_Text costText;
+    
+    private Button button;
+    private ItemData item;
 
-    public BuffShopManager shopManager;
+    public event Action<ItemData> OnButtonClicked;
 
-    Button button;
-
-    public Transform iconRoot;
-
-    public TMP_Text nameText;
-    public TMP_Text costText;
-
-    GameObject currentIcon;
-
-    void Awake()
+    private void Awake()
     {
         button = GetComponent<Button>();
-
-        if (button != null)
-        {
-            button.onClick.AddListener(Select);
-        }
     }
 
+    private void OnEnable()
+    {
+        button.onClick.AddListener(Select);
+    }
+
+    private void OnDisable()
+    {
+        button.onClick.RemoveListener(Select);
+    }
+
+    // 初期化で呼ばれるよ
     public void SetItem(ItemData item)
     {
-        itemData = item;
-
+        this.item = item;
+        icon.sprite = item.icon;
         nameText.text = item.itemName;
         costText.text = item.cost + "枚";
-
-        // 前のアイコン削除
-        if (currentIcon != null)
-            Destroy(currentIcon);
-
-        // 新しいアイコン生成
-        if (item.buttonIconPrefab != null)
-        {
-            currentIcon = Instantiate(item.buttonIconPrefab, iconRoot, false);
-
-            RectTransform rect = currentIcon.GetComponent<RectTransform>();
-            if (rect != null)
-            {
-                rect.anchoredPosition = Vector2.zero;
-                rect.localScale = Vector3.one;
-            }
-        }
     }
 
-    public void Select()
+    private void Select()
     {
-        if (itemData != null)
-            shopManager.SelectItem(itemData);
+        OnButtonClicked?.Invoke(item);
     }
 }

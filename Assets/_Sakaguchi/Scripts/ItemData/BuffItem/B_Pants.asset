@@ -17,6 +17,6 @@ MonoBehaviour:
   description: "\u30B9\u30ED\u30C3\u30C8\u306E\u78BA\u7387\u304C\u4E0A\u6607\u3059\u308B"
   cost: 300
   icon: {fileID: 21300000, guid: 66492086136c85f48a50f2693fecf12f, type: 3}
-  buttonIconPrefab: {fileID: 4892959137503164888, guid: 5fde6c387e30ffa469cb19c4699deb38, type: 3}
   effect: {fileID: 0}
   isConsumable: 0
+  level: 0

@@ -8,28 +8,32 @@ public class StatusGet : MonoBehaviour
     [SerializeField] private ItemDataBase itemDatabase;
     [SerializeField] private MenuManager menuManager;
     [SerializeField] private CharacterData[] datas;
-    private CharacterData characterData;
 
-    // 各キャラの好感度
+    [Header("各キャラの好感度")]
     [SerializeField] private TextMeshProUGUI[] likeabilityTexts;     // 好感度一覧
 
-    // メイン画面左のステータス一覧
+    [Header("常時表示のステータス")]
     [SerializeField] private TextMeshProUGUI statusLikeability;     // ルートキャラ用好感度
-    [SerializeField] private int nowStory;  // ストーリー進行度
-    [SerializeField] private int miniStory; // ミニイベ進行度
-    [SerializeField] private int nowMedal;  // 所持メダル
     [SerializeField] private TextMeshProUGUI nowStoryText;  // ストーリー進行度
     [SerializeField] private TextMeshProUGUI miniStoryText; // ミニイベ進行度
     [SerializeField] private TextMeshProUGUI nowMedalText;  // 所持メダル
+    [SerializeField] private Image cutinSprite; // 
 
-    // バフ関連
+    [Header("バフ関連")]
     [SerializeField] private ItemData[] buffStats = new ItemData[3];    // セットされているバフ
     [SerializeField] private TextMeshProUGUI[] buffStatsTexts;          // バフ用テキスト
     [SerializeField] private TextMeshProUGUI[] buffNameTexts;           // バフ名テキスト
+    [SerializeField] private TextMeshProUGUI[] buffLevelTexts;          // バフレベル用テキスト
+    [SerializeField] private GameObject[] deleteButtons;                // バフ削除ボタン
     [SerializeField] private GameObject buffPanel;                      // 確認パネル
-    private int nowNo = -1;
 
-    [SerializeField] private Image cutinSprite; // ルートキャラの画像
+    private CharacterData characterData;
+    private int nowStory;   // ストーリー進行度
+    private int miniStory;  // ミニイベ進行度
+    private int nowMedal;   // 所持メダル
+    private int nowNo = -1; // バフ削除用
+
+    public bool isBuff;     // バフスロットに空きがあるか
 
     /// <summary>
     /// 現在のステータスを反映
@@ -43,9 +47,6 @@ public class StatusGet : MonoBehaviour
             likeabilityTexts[i].text = datas[i].likeability.ToString() + " / 100";
         }
 
-        // バフ番号の取得
-        // 効果内容の反映
-
         // 現在ルートのキャラ取得
         characterData =
             characterDatabase.GetCharacter(
@@ -54,7 +55,7 @@ public class StatusGet : MonoBehaviour
 
         cutinSprite.sprite = characterData.cutinSprite;
 
-        // ステータス取得
+        // ステータス取得　未実装
         nowStory = 1;
         miniStory = 1;
         nowMedal = 999999;
@@ -79,11 +80,15 @@ public class StatusGet : MonoBehaviour
             {
                 buffNameTexts[i].text = buffStats[i].itemName;
                 buffStatsTexts[i].text = buffStats[i].description;
+                buffLevelTexts[i].text = "Lv." + buffStats[i].level.ToString();
+                deleteButtons[i].SetActive(true);
             }
             else
             {
                 buffNameTexts[i].text = "未設定";
-                buffStatsTexts[i].text = "";
+                buffStatsTexts[i].text = ""; 
+                buffLevelTexts[i].text = "";
+                deleteButtons[i].SetActive(false);
             }
         }
     }
@@ -101,20 +106,35 @@ public class StatusGet : MonoBehaviour
             return false;
         }
 
+        // 同じバフを所持しているか確認
+        for (int i = 0; i < buffStats.Length; i++)
+        {
+            if (buffStats[i] != null && buffStats[i] == item)
+            {
+                buffStats[i].level++;
+
+                UpdateBuffUI();
+                Debug.Log($"{item.itemName} のレベルが {buffStats[i].level} になりました");
+
+                return true;
+            }
+        }
+
         // 空いているスロットを探す
         for (int i = 0; i < buffStats.Length; i++)
         {
             if (buffStats[i] == null)
             {
                 buffStats[i] = item;
-
+                buffStats[i].level = 1;
                 UpdateBuffUI();
 
-                Debug.Log(item.itemName + " を追加");
+                Debug.Log($"{item.itemName} のレベルが {buffStats[i].level} になりました");
                 return true;
             }
         }
 
+        isBuff = false;
         Debug.Log("バフ枠がいっぱいです");
         return false;
     }
@@ -128,6 +148,9 @@ public class StatusGet : MonoBehaviour
         buffPanel.SetActive(true);
     }
 
+    /// <summary>
+    /// 所持しているバフの削除
+    /// </summary>
     public void DeletChoice(int buttonNo)
     {
         switch(buttonNo)
@@ -136,8 +159,8 @@ public class StatusGet : MonoBehaviour
                 if (nowNo < 0 || nowNo >= buffStats.Length)
                     return;
 
+                buffStats[nowNo].level = 0;
                 buffStats[nowNo] = null;
-
                 nowNo = -1;
                 UpdateBuffUI();
                 buffPanel.SetActive(false);
