@@ -10,7 +10,7 @@ public class PlayerInventory : MonoBehaviour
     // テストで開始時にtestdataをインベントリに追加してみる
     private void Start()
     {
-        AddItem(testdata);
+        //AddItem(testdata);
     }
 
     // ItemDataクラスを持てるインベントリというリストのクラス
@@ -38,9 +38,11 @@ public class PlayerInventory : MonoBehaviour
 
     void OnInventoryChanged()
     {
-        foreach (ItemData invItem in inventory)
         {
-            invItem.effect?.OnInventoryChanged(context);
+            foreach (ItemData invItem in inventory)
+            {
+                invItem.effect?.OnInventoryChanged(context);
+            }
         }
     }
 

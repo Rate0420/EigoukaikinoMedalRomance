@@ -17,15 +17,22 @@ public class MiniEventBet : MonoBehaviour
 
     public int consumptionMedal = 15;
 
-    public void Init()
+    void Awake()
     {
         Medals = GameState.Instance.OwnedModel.Count;
+        Debug.Log("メダル:"+Medals);
         textMedals = Medals;
+
+        medalText.text = "所持メダル：" + textMedals.ToString();
+        consumptionText.text = "消費メダル" + (consumptionMedal * effectInt).ToString();
+        EffectText.text = Effect();
     }
 
     public void BetUP()
     {
+        Debug.Log("ベットアップ");
         if (textMedals - consumptionMedal <= 0) return;
+        Debug.Log("ベットアップ2");
         textMedals -= consumptionMedal;
         effectInt++;
 

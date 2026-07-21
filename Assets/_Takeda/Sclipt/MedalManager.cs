@@ -1,57 +1,25 @@
 using UnityEngine;
 using TMPro;
+using EMR.Core;
 
 public class MedalManager : MonoBehaviour
 {
-    public static MedalManager Instance;
-
-    public int medals = 200;
-
     public TMP_Text medalText;
 
-    void Awake()
+    private void Start()
     {
-        Instance = this;
+        GameState.Instance.OwnedModel.OnCountChanged += UpdateUI;
+        UpdateUI(GameState.Instance.OwnedModel.Count);
     }
 
-    public void AddMedals(int amount)
+    private void OnDisable()
     {
-        medals += amount;
-
-        UpdateUI();
-
-        RefreshAllShopButtons();
+        GameState.Instance.OwnedModel.OnCountChanged -= UpdateUI;
     }
 
-    public bool SpendMedals(int amount)
+
+    void UpdateUI(int medal)
     {
-        if (medals < amount)
-            return false;
-
-        medals -= amount;
-
-        UpdateUI();
-
-        RefreshAllShopButtons();
-
-        return true;
-    }
-
-    void UpdateUI()
-    {
-        medalText.text = "ŠŽƒƒ_ƒ‹ : " + medals;
-    }
-
-    void RefreshAllShopButtons()
-    {
-        foreach (BuffShopManager shop in FindObjectsByType<BuffShopManager>(FindObjectsSortMode.None))
-        {
-            shop.RefreshUI();
-        }
-
-        foreach (CostShopMananager shop in FindObjectsByType<CostShopMananager>(FindObjectsSortMode.None))
-        {
-            shop.RefreshUI();
-        }
+        medalText.text = medal + "–‡";
     }
 }

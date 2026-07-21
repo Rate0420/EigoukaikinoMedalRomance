@@ -17,6 +17,6 @@ MonoBehaviour:
   description: "\u30E1\u30C0\u30EB\u3092\u767A\u5C04\u3059\u308B\u6642\u3001\u4EE3\u308F\u308A\u306B5%\u306E\u78BA\u7387\u3067\u3001\\n\u4FA1\u5024\u304C\u500D\u306E\u91D1\u306E\u30E1\u30C0\u30EB\u304C\u767A\u5C04\u3055\u308C\u308B"
   cost: 200
   icon: {fileID: 21300000, guid: 611bbe7b44fdb764dbd13fa8403e353f, type: 3}
-  buttonIconPrefab: {fileID: 4892959137503164888, guid: 75df84ca232aa6b4c83d34944b28399b, type: 3}
   effect: {fileID: 11400000, guid: a7c0dea51a0607e49ace39fae8253139, type: 2}
   isConsumable: 0
+  level: 0

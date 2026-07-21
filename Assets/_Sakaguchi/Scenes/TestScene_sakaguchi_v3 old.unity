@@ -6751,8 +6751,8 @@ MonoBehaviour:
   - {fileID: 710116628}
   - {fileID: 1844667884}
   - {fileID: 287211342}
-  gamePause: {fileID: 1285111476}
   isPaused: 0
+  pauseRequested: 0
   isProcessing: 0
 --- !u!4 &163250826
 Transform:
@@ -8344,9 +8344,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 351a8ff79bc05e24492cbc666d3e7a35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePause: {fileID: 1285111476}
   reserveManager: {fileID: 163250825}
   MedalRoot: {fileID: 349871396}
+  panelAniZoom: {fileID: 0}
+  menuCanvas: {fileID: 0}
+  BlackOutImage: {fileID: 0}
+  winManager: {fileID: 0}
+  slotManager: {fileID: 0}
 --- !u!1001 &313787446
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11793,6 +11797,7 @@ MonoBehaviour:
   payoutText: {fileID: 269610097}
   videoPlayer: {fileID: 905200725}
   refundBehaviour: {fileID: 1250624504}
+  isPayout: 0
 --- !u!4 &611267531
 Transform:
   m_ObjectHideFlags: 0
@@ -18746,7 +18751,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaf741d2f29727f41ba4bd30e45bf095, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPaused: 0
 --- !u!4 &1285111477
 Transform:
   m_ObjectHideFlags: 0

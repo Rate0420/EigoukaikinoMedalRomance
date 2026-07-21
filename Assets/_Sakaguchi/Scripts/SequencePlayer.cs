@@ -54,7 +54,7 @@ public class SequencePlayer : MonoBehaviour
             textures[i] = (Texture2D)loaded[i];
 
         frameCache[path] = textures;
-        Debug.Log($"[Preload] {path}ÅF{textures.Length}ñá");
+        //Debug.Log($"[Preload] {path}ÅF{textures.Length}ñá");
     }
 
     void Update()

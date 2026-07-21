@@ -4,7 +4,7 @@ using System.Collections;
 public class PanelAniZoom : MonoBehaviour
 {
     // メニューのパネル切り替えアニメーション
-
+    [SerializeField] private CharacterImage characterImage;
     [SerializeField] private GameObject menuPanel;  // メニューパネル
 
     [SerializeField] private RectTransform panel;   // 暗転１
@@ -26,6 +26,11 @@ public class PanelAniZoom : MonoBehaviour
 
     private RectTransform targetPanel;  // 現在暗転させているもの
     private float targerDuration;       // 現在設定されている暗転時間
+
+    [SerializeField] private MenuManager menuManager;
+    [SerializeField] private GameObject shopPanel;
+
+    public bool isGameScene = false;
 
     /// <summary>
     /// メニューパネルの表示切替
@@ -50,9 +55,29 @@ public class PanelAniZoom : MonoBehaviour
         targetPanel = image;
         targerDuration = _duration;
         yield return ScaleAnimation(_zoomOutPos, _zoomInPos);
-        menuPanel.SetActive(!menuPanel.activeSelf);
-        
+
+        if(isGameScene)
+        {
+            Debug.Log("aa");
+            menuPanel.SetActive(!menuPanel.activeSelf);
+            isGameScene = false;
+        }
+        // ショップボタンを押したか
+        else if (menuManager.isShopFlg)
+        {
+            if (shopPanel.activeSelf)
+            {
+                shopPanel.SetActive(false);
+                menuManager.isShopFlg = false;
+            }
+            else
+                shopPanel.SetActive(true);
+        }
+        else
+            menuPanel.SetActive(!menuPanel.activeSelf);
+
         yield return new WaitForSeconds(wSF);
+
         // 暗転解除
         yield return ScaleAnimation(_zoomInPos, _zoomOutPos);
         targetPanel = panel;
@@ -60,6 +85,7 @@ public class PanelAniZoom : MonoBehaviour
         yield return ScaleAnimation(zoomOutPos, zoomInPos);
         bOImage[0].SetActive(false);
         bOImage[1].SetActive(false);
+        characterImage.MainImageChange();
     }
 
     private IEnumerator ScaleAnimation(Vector3 start, Vector3 end)

@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class Test_T : MonoBehaviour
 {
-    // 仮実装
-    public PanelAniZoom panelAniZoom;
-    public GameObject c_Button;
-
-    // メニュー画面の切り替え用で使う
-    public void C_Button()
+    // デバッグ用
+    // アイテムレベルのリセット
+    [SerializeField] ItemData[] itemData;
+    private void Start()
     {
-        panelAniZoom.MenuPanelChange();
+        for(int i = 0; i < itemData.Length; i++)
+        {
+            itemData[i].level = 0;
+        }
     }
 }

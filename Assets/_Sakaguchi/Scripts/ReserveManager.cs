@@ -19,6 +19,7 @@ public class ReserveManager : MonoBehaviour
     private GamePause gamePause;
 
 
+
     public bool isPaused = false;
 
     // 保留と保留の間（次の消化前の待機中）かどうか

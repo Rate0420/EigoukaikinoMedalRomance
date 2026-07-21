@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using EMR.Core;
 
 public class CostShopMananager : MonoBehaviour
 {
@@ -54,7 +55,7 @@ public class CostShopMananager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            MedalManager.Instance.AddMedals(100);
+            GameState.Instance.OwnedModel.AddMedal(100);
 
             UpdateBuyButton();
         }
@@ -87,17 +88,18 @@ public class CostShopMananager : MonoBehaviour
     //------------------------------------
     public void BuyItem()
     {
+        Debug.Log(currentItem.name, this);
         if (currentItem == null)
             return;
 
-        if (!MedalManager.Instance.SpendMedals(currentItem.cost))
+        if (GameState.Instance.OwnedModel.Count < 0)
         {
             Debug.Log("メダル不足");
             return;
         }
 
         Debug.Log(currentItem.itemName + " を購入しました");
-
+        GameState.Instance.OwnedModel.RemoveMedal(currentItem.cost);
         currentItem = null;
 
         detailPanel.SetActive(false);
@@ -117,7 +119,7 @@ public class CostShopMananager : MonoBehaviour
         }
 
         buyButton.interactable =
-            MedalManager.Instance.medals >= currentItem.cost;
+            GameState.Instance.OwnedModel.Count >= currentItem.cost;
     }
 
     //------------------------------------
@@ -125,7 +127,7 @@ public class CostShopMananager : MonoBehaviour
     //------------------------------------
     public void Reroll()
     {
-        if (!MedalManager.Instance.SpendMedals(rerollCost))
+        if (GameState.Instance.OwnedModel.Count < 0)
         {
             Debug.Log("メダル不足");
             return;

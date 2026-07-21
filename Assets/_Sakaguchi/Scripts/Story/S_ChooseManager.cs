@@ -57,6 +57,12 @@ public class S_ChooseManager : MonoBehaviour
             if (EventSystem.current.currentSelectedGameObject == null)
                 EventSystem.current.SetSelectedGameObject(currentFirstBtn);
         }
+
+        if (storyData.isMiniEvent && IsShowingChoices && resourceUI != null)
+        {
+            if (Input.GetKeyDown(KeyCode.H))
+                resourceUI.SetActive(!resourceUI.activeSelf);
+        }
     }
 
     // ----------------------------------------------------------------

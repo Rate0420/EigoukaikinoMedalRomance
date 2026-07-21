@@ -386,34 +386,36 @@ public class SlotManager : MonoBehaviour
             
             Debug.Log("ランク:" + data.rank + "演出:" + data.effect);
             reelManager.StartReels();
+
+            // 演出をyield returnで待ってから停止開始
             if (data.effect != EffectType.None)
             {
-                effectCoroutine = StartCoroutine(effectManager.PlayEffect(data.effect));
+                yield return StartCoroutine(effectManager.PlayEffect(data.effect));
             }
 
+            // 演出が終わってから停止開始
+            reelManager.StartStopReels(reels);
+            Debug.Log("[SlotManager] StartStopReels呼び出し");
+
+            yield return new WaitUntil(() => reelManager.IsAllStopped);
+
+            // 演出がまだ終わっていない場合は待つ
             if (effectCoroutine != null)
             {
                 yield return effectCoroutine;
             }
 
-            reelManager.StartStopReels(reels);
-
-            // リール終了待ち（ここ大事）
-            yield return new WaitUntil(() =>
-                !reelManager.leftReel.IsSpinning &&
-                !reelManager.centerReel.IsSpinning &&
-                !reelManager.rightReel.IsSpinning
-            );
-
             yield return new WaitForSeconds(slotEndDelay);
+
+            // 当たり処理...
 
             // 当たってた場合ここで当たりの演出をやる
 
             // dataの当たりに応じて確変か確変じゃないかを決める
             // 7以外の奇数(1,3,5,9)だった場合、確変フラグをオンにする
-           
+
             // 当たりの場合
-            if(data.resultNumber != -1)
+            if (data.resultNumber != -1)
             {
                 if(data.resultNumber == 7)
                 {

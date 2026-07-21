@@ -14,4 +14,8 @@ public enum ItemType
     [InspectorName("メダルウォール")] c_Wall,
     [InspectorName("フリーシューティング")] c_Shutar,
     [InspectorName("クエイクスタンプ")]c_stamp,
+
+    // 選択肢ボール
+    [InspectorName("選択肢ボール1")] s_Ball_1,
+    [InspectorName("選択肢ボール2")] s_Ball_2
 }

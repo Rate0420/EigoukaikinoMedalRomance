@@ -58,6 +58,7 @@ public class SceneChanger : MonoBehaviour
         // 切れ目に入ったのを確認してからポーズ
         gamePause.ChangePause(true);
 
+        panelAniZoom.isGameScene = true;
         menuCanvas.SetActive(true);
         BlackOutImage.SetActive(true);
         panelAniZoom.MenuPanelChange();
