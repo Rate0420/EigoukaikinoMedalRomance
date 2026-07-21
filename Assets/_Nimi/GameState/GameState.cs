@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using EMR.Medal;
 using EMR.Round;
@@ -6,41 +7,21 @@ namespace EMR.Core
 {
     public class GameState : MonoBehaviour
     {
-        /// <summary>
-        /// インスタンス
-        /// </summary>
         public static GameState Instance { get; private set; }
 
-        /// <summary>
-        /// 所有するメダルの情報を取得します。
-        /// </summary>
         public MedalsOwnedModel OwnedModel { get; private set; }
-
-        /// <summary>
-        /// メダルの払い戻しの通知システム
-        /// </summary>
         public MedalRefundNotifier RefundNotifier { get; private set; }
-
-        /// <summary>
-        /// ラウンド進行管理システム
-        /// </summary>
         public RoundManager RoundManager { get; private set; }
-
-        /// <summary>
-        /// ラウンド内で消費したメダル管理クラス
-        /// </summary>
         public RoundAdvanceService RoundService { get; private set; }
-
-        /// <summary>
-        /// ポーズ管理用システム
-        /// </summary>
         public GamePause GamePause { get; private set; }
 
+        public RoundProgressionSettings RoundSettings { get; private set; }
+
+        public bool IsInitialized { get; private set; }
 
         private void Awake()
         {
-            // 既にインスタンスが存在する場合は、このオブジェクトを破棄します。
-            if (Instance != null)
+            if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
                 return;
@@ -48,13 +29,75 @@ namespace EMR.Core
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
+        }
 
+        /// <summary>
+        /// ゲーム全体のサービスを初期化する。
+        /// Bootstrapper から一度だけ呼ぶ。
+        /// </summary>
+        public void Initialize(RoundProgressionSettings roundSettings)
+        {
+            if (IsInitialized)
+            {
+                throw new InvalidOperationException(
+                    "GameState はすでに初期化されています。");
+            }
+
+            if (roundSettings == null)
+            {
+                throw new ArgumentNullException(nameof(roundSettings));
+            }
+
+            RoundSettings = roundSettings;
 
             OwnedModel = new MedalsOwnedModel(30);
             RefundNotifier = new MedalRefundNotifier();
-            RoundManager = new RoundManager();
+
+            // RoundProgressionSettings は1始まりなので、開始値も1にそろえる。
+            RoundManager = new RoundManager(startRound: 1);
             RoundService = new RoundAdvanceService();
+
             GamePause = new GamePause();
+
+            RoundManager.OnRoundChanged += ApplyRoundRequirement;
+
+            ApplyRoundRequirement(RoundManager.CurrentRound);
+
+            IsInitialized = true;
+        }
+
+        private void ApplyRoundRequirement(int roundNumber)
+        {
+            if (roundNumber > RoundSettings.RoundCount)
+            {
+                Debug.Log($"全{RoundSettings.RoundCount}ラウンドをクリアしました。");
+                return;
+            }
+
+            RoundRequirement requirement =
+                RoundSettings.GetRequirement(roundNumber);
+
+            RoundService.SetMedalCost(requirement.RequiredMedalCount);
+
+            Debug.Log(
+                $"Round {roundNumber} 開始: " +
+                $"必要メダル={requirement.RequiredMedalCount}, " +
+                $"必要ボール={requirement.RequiredBallCount}");
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance != this)
+            {
+                return;
+            }
+
+            if (RoundManager != null)
+            {
+                RoundManager.OnRoundChanged -= ApplyRoundRequirement;
+            }
+
+            Instance = null;
         }
     }
 }

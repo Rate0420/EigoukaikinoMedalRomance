@@ -1,0 +1,17 @@
+{
+    "name": "EMR.Bootstrap",
+    "rootNamespace": "EMR.Bootstrap",
+    "references": [
+        "GUID:22caa4807f77a1b4ba0704e06c940681",
+        "GUID:bbc5a9ce90f50d347a460c1245106a6c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
