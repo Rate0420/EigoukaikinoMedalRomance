@@ -122,7 +122,7 @@ namespace EMR.Medal.Launch
                 {
                     Launch();
                     GameState.Instance.OwnedModel.RemoveMedal();
-                    GameState.Instance.RoundService.AddConsumedMedals(1);
+                    GameState.Instance.RoundService.ConsumeMedals(1);
                 }
             }
         }

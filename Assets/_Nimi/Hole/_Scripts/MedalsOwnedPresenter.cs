@@ -1,5 +1,5 @@
-using EMR.Core;
 using UnityEngine;
+using EMR.Core;
 
 namespace EMR.Medal.Hole
 {
@@ -27,6 +27,12 @@ namespace EMR.Medal.Hole
         void OnMedalCollected(ICollectable collectable)
         {
             GameState.Instance.OwnedModel.AddMedal(collectable.Count);
+
+            if (collectable.Info.Type == CollectableType.Ball)
+            {
+                Debug.Log("ボールが落下");
+                GameState.Instance.RoundService.AddDroppedBalls(1);
+            }
         }
     }
 };

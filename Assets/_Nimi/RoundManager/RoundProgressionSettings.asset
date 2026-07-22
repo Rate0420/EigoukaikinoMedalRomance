@@ -13,19 +13,19 @@ MonoBehaviour:
   m_Name: RoundProgressionSettings
   m_EditorClassIdentifier: 
   _roundRequirements:
-  - <RequiredBallCount>k__BackingField: 0
+  - <RequiredBallCount>k__BackingField: 5
     <RequiredMedalCount>k__BackingField: 5
-  - <RequiredBallCount>k__BackingField: 2
-    <RequiredMedalCount>k__BackingField: 75
-  - <RequiredBallCount>k__BackingField: 2
-    <RequiredMedalCount>k__BackingField: 75
-  - <RequiredBallCount>k__BackingField: 2
-    <RequiredMedalCount>k__BackingField: 75
-  - <RequiredBallCount>k__BackingField: 2
-    <RequiredMedalCount>k__BackingField: 75
-  - <RequiredBallCount>k__BackingField: 2
-    <RequiredMedalCount>k__BackingField: 75
-  - <RequiredBallCount>k__BackingField: 2
-    <RequiredMedalCount>k__BackingField: 75
-  - <RequiredBallCount>k__BackingField: 2
-    <RequiredMedalCount>k__BackingField: 75
+  - <RequiredBallCount>k__BackingField: 0
+    <RequiredMedalCount>k__BackingField: 6
+  - <RequiredBallCount>k__BackingField: 0
+    <RequiredMedalCount>k__BackingField: 7
+  - <RequiredBallCount>k__BackingField: 0
+    <RequiredMedalCount>k__BackingField: 8
+  - <RequiredBallCount>k__BackingField: 0
+    <RequiredMedalCount>k__BackingField: 9
+  - <RequiredBallCount>k__BackingField: 0
+    <RequiredMedalCount>k__BackingField: 10
+  - <RequiredBallCount>k__BackingField: 0
+    <RequiredMedalCount>k__BackingField: 11
+  - <RequiredBallCount>k__BackingField: 0
+    <RequiredMedalCount>k__BackingField: 12

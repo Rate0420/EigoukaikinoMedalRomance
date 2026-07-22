@@ -1,9 +1,11 @@
 using System;
+using UnityEngine;
 
 namespace EMR.Round
 {
     /// <summary>
-    /// ラウンドを管理するクラス
+    /// 現在のラウンド番号を管理するクラス。
+    /// ラウンド変更時にはイベントを通知する。
     /// </summary>
     public class RoundManager 
     {
@@ -18,9 +20,9 @@ namespace EMR.Round
         public event Action<int> OnRoundChanged;
 
 
-        public RoundManager (int startRound = 0)
+        public RoundManager (int startRound = 1)
         {
-            CurrentRound = Math.Max(0, startRound);
+            SetRound(startRound);
         }
 
         /// <summary>
@@ -45,6 +47,8 @@ namespace EMR.Round
 
             CurrentRound = newRound;
             OnRoundChanged?.Invoke(CurrentRound);
+
+            Debug.Log($"ラウンド進行 {CurrentRound}");
         }
     }
 }
