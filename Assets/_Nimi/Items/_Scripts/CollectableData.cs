@@ -17,6 +17,7 @@ namespace EMR.Medal
         [SerializeField] string _name;
         [SerializeField] int _count = 1;
 
+        public CollectableType Type => _type;
         public string Name => _name;
         public int Count => _count;
     }
