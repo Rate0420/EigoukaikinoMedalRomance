@@ -14,7 +14,7 @@ public class ItemData : ScriptableObject
     public string description;
 
     // 購入に必要なメダル数
-    public int cost;
+    public int[] cost;
 
     // 詳細画面に表示するアイコン(Sprite)
     public Sprite icon;
