@@ -1,3 +1,5 @@
+using EMR.Medal.Launch;
+using EMR.Medal.Refund.l;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -64,6 +66,9 @@ namespace EMR.Medal.Refund
 
                 rb.AddForce(forceDirection * power, ForceMode.Impulse);
             }
+
+            // haslanded 処理(当たった際のメダルに特殊効果を付与させない)
+            medal.GetComponent<MedalLanded>().hasLanded = true;
         }
 
         private void OnDrawGizmos()

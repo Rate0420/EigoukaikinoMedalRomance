@@ -1,3 +1,4 @@
+using EMR.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,11 +27,11 @@ public class StatusGet : MonoBehaviour
     [SerializeField] private TextMeshProUGUI[] buffLevelTexts;          // バフレベル用テキスト
     [SerializeField] private GameObject[] deleteButtons;                // バフ削除ボタン
     [SerializeField] private GameObject buffPanel;                      // 確認パネル
+    [SerializeField] private int maxBuffLevel;
 
     private CharacterData characterData;
     private int nowStory;   // ストーリー進行度
     private int miniStory;  // ミニイベ進行度
-    private int nowMedal;   // 所持メダル
     private int nowNo = -1; // バフ削除用
 
     public bool isBuff;     // バフスロットに空きがあるか
@@ -58,15 +59,19 @@ public class StatusGet : MonoBehaviour
         // ステータス取得　未実装
         nowStory = 1;
         miniStory = 1;
-        nowMedal = 999999;
 
         // 画面左のステータス画面に反映
         nowStoryText.text = nowStory.ToString() + "/7";
         miniStoryText.text = miniStory.ToString() + "/8";
         statusLikeability.text = characterData.likeability.ToString();
-        nowMedalText.text = nowMedal.ToString() + "枚";
-
+        GameState.Instance.OwnedModel.OnCountChanged += UpdateUI;
+        UpdateUI(GameState.Instance.OwnedModel.Count);
         UpdateBuffUI();
+    }
+
+    private void UpdateUI(int medal)
+    {
+        nowMedalText.text = medal + "枚";
     }
 
     /// <summary>
@@ -111,12 +116,19 @@ public class StatusGet : MonoBehaviour
         {
             if (buffStats[i] != null && buffStats[i] == item)
             {
-                buffStats[i].level++;
+                if (buffStats[i].level == maxBuffLevel)
+                {
+                    Debug.Log("アイテムレベルが最大です。");
+                    return false;
+                }
+                else
+                {
+                    buffStats[i].level++;
 
-                UpdateBuffUI();
-                Debug.Log($"{item.itemName} のレベルが {buffStats[i].level} になりました");
-
-                return true;
+                    UpdateBuffUI();
+                    Debug.Log($"{item.itemName} のレベルが {buffStats[i].level} になりました");
+                    return true;
+                }
             }
         }
 

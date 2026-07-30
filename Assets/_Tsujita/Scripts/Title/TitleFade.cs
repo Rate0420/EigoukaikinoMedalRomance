@@ -1,17 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
-public class PanelAniZoom : MonoBehaviour
+public class TitleFade : MonoBehaviour
 {
-    // メニューのパネル切り替えアニメーション
-    [SerializeField] private CharacterImage characterImage;
-    [SerializeField] private GameObject menuPanel;  // メニューパネル
-
     [SerializeField] private RectTransform panel;   // 暗転１
     [SerializeField] private RectTransform image;   // 暗転２(キャラ)
 
     // 暗転用
-    [SerializeField] private Vector2 zoomInPos = new Vector2(0 , 0);
+    [SerializeField] private Vector2 zoomInPos = new Vector2(0, 0);
     [SerializeField] private Vector2 zoomOutPos = Vector2.zero;
     // 暗転用(キャラ)
     [SerializeField] private Vector2 _zoomInPos = new Vector2(0, 0);
@@ -27,15 +23,10 @@ public class PanelAniZoom : MonoBehaviour
     private RectTransform targetPanel;  // 現在暗転させているもの
     private float targerDuration;       // 現在設定されている暗転時間
 
-    [SerializeField] private MenuManager menuManager;
-    [SerializeField] private GameObject shopPanel;
-
-    public bool isGameScene = false;
-
     /// <summary>
-    /// メニューパネルの表示切替
+    /// 暗転開始
     /// </summary>
-    public void MenuPanelChange()
+    public void ClosePanel()
     {
         bOImage[0].SetActive(true);
         bOImage[1].SetActive(true);
@@ -45,38 +36,32 @@ public class PanelAniZoom : MonoBehaviour
     }
 
     /// <summary>
-    /// 暗転→暗転解除
+    /// 暗転解除
+    /// </summary>
+    public void OpenPanel()
+    {
+        targetPanel = image;
+        targerDuration = _duration;
+        StartCoroutine(OpenAnimation());
+    }
+
+    /// <summary>
+    /// 暗転開始
     /// </summary>
     private IEnumerator CloseAnimation()
     {
         yield return ScaleAnimation(zoomInPos, zoomOutPos);
-
-        // 暗転開始
         targetPanel = image;
         targerDuration = _duration;
         yield return ScaleAnimation(_zoomOutPos, _zoomInPos);
-
-        if(isGameScene)
-        {
-            menuPanel.SetActive(!menuPanel.activeSelf);
-            isGameScene = false;
-        }
-        // ショップボタンを押したか
-        else if (menuManager.isShopFlg)
-        {
-            if (shopPanel.activeSelf)
-            {
-                shopPanel.SetActive(false);
-                menuManager.isShopFlg = false;
-            }
-            else
-                shopPanel.SetActive(true);
-        }
-        else
-            menuPanel.SetActive(!menuPanel.activeSelf);
-
         yield return new WaitForSeconds(wSF);
+    }
 
+    /// <summary>
+    ///  暗転解除
+    /// </summary>
+    private IEnumerator OpenAnimation()
+    {
         // 暗転解除
         yield return ScaleAnimation(_zoomInPos, _zoomOutPos);
         targetPanel = panel;
@@ -84,7 +69,7 @@ public class PanelAniZoom : MonoBehaviour
         yield return ScaleAnimation(zoomOutPos, zoomInPos);
         bOImage[0].SetActive(false);
         bOImage[1].SetActive(false);
-        characterImage.MainImageChange();
+        yield return new WaitForSeconds(wSF);
     }
 
     private IEnumerator ScaleAnimation(Vector3 start, Vector3 end)

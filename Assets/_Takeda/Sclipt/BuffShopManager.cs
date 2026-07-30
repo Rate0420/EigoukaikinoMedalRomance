@@ -8,42 +8,43 @@ public class BuffShopManager : MonoBehaviour
 {
 
     [Header("リロールコスト")]
-    public int rerollCost = 50;
+    [SerializeField] private int rerollCost = 50;
 
     [Header("全アイテム")]
     [SerializeField] private ItemData[] allBuffs;    // バフアイテム用データ
     [SerializeField] private ItemData[] allItems;    // 消費アイテム用データ
 
-    [Header("現在表示中")]
-    public ItemData[] currentBuffs = new ItemData[4];
-    public ItemData[] currentItems = new ItemData[4];
-
     [Header("アイテムボタン")]
-    public ItemButton[] buffButtons;
-    public ItemButton[] itemButtons;
+    [SerializeField] private ItemButton[] buffButtons;
+    [SerializeField] private ItemButton[] itemButtons;
 
     [Header("詳細パネル")]
-    public GameObject detailPanel;
+    [SerializeField] private GameObject detailPanel;
 
-    public Image detailIcon;
-    public TMP_Text detailName;
-    public TMP_Text detailDesc;
-    public TMP_Text costText;
+    [SerializeField] private Image detailIcon;
+    [SerializeField] private TMP_Text detailName;
+    [SerializeField] private TMP_Text detailDesc;
+    [SerializeField] private TMP_Text costText;
 
     [Header("アイテム種類")]
-    public TMP_Text itemTypeText;
-
-    [Header("所持メダル表示")]
-    public TMP_Text medalText;
+    [SerializeField] private TMP_Text itemTypeText;
 
     [Header("購入ボタン")]
-    public Button buyButton;
+    [SerializeField] private Button buyButton;
 
     private ItemData currentItem;
 
+    private ItemData[] currentBuffs = new ItemData[4];
+    private ItemData[] currentItems = new ItemData[4];
+
+    // 追加分
     [SerializeField] private StatusGet statusGet;
     [SerializeField] private TextMeshProUGUI levelText;
     ItemType itemType;
+    private int rerollCount;    // リロール回数のリセット
+
+    // ラウンドマネージャーができるまでの仮
+    public int round;
 
     void Start()
     {
@@ -105,7 +106,7 @@ public class BuffShopManager : MonoBehaviour
         detailIcon.sprite = item.icon;
         detailName.text = item.itemName;
         detailDesc.text = item.description;
-        costText.text = item.cost + "枚";
+        costText.text = $"{item.cost[round]}枚"; ;
         levelText.text = "Lv." + item.level; 
 
         if (item.isConsumable)
@@ -167,7 +168,7 @@ public class BuffShopManager : MonoBehaviour
         }
 
         // メダルの支払い
-        GameState.Instance.OwnedModel.RemoveMedal(currentItem.cost);
+        GameState.Instance.OwnedModel.RemoveMedal(currentItem.cost[round]);
 
         currentItem = null;
 
@@ -175,6 +176,7 @@ public class BuffShopManager : MonoBehaviour
 
         buyButton.interactable = false;
     }
+
     //------------------------------------
     // 購入ボタン更新
     //------------------------------------
@@ -187,21 +189,24 @@ public class BuffShopManager : MonoBehaviour
         }
 
         buyButton.interactable =
-            GameState.Instance.OwnedModel.Count >= currentItem.cost;
+            GameState.Instance.OwnedModel.Count >= currentItem.cost[round];
     }
+
     //------------------------------------
     // リロール
     //------------------------------------
     public void Reroll()
     {
-        if (GameState.Instance.OwnedModel.Count < 50)
+        rerollCount++;
+
+        if (GameState.Instance.OwnedModel.Count < rerollCost * rerollCount)
         {
             Debug.Log("メダル不足");
             return;
         }
 
         // メダルの支払い
-        GameState.Instance.OwnedModel.RemoveMedal(rerollCost);
+        GameState.Instance.OwnedModel.RemoveMedal(rerollCost * rerollCount);
 
         RerollFree();
 
@@ -265,5 +270,15 @@ public class BuffShopManager : MonoBehaviour
             buffButtons[i].gameObject.SetActive(true);
             itemButtons[i].gameObject.SetActive(true);
         }
+    }
+
+    /// <summary>
+    /// ラウンド更新の時に呼び出して
+    /// </summary>
+    public void RaundShopReset()
+    {
+        // リロール回数のリセット・ショップの更新
+        rerollCount = 0;
+        RerollFree();
     }
 }

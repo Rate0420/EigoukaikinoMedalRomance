@@ -1,195 +1,33 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+// æ‰€æŒã‚¢ã‚¤ãƒ†ãƒ ã®ãƒªã‚¹ãƒˆã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹ã€‚
+// ã€Œã‚¤ãƒ™ãƒ³ãƒˆãŒèµ·ããŸã‚‰åŠ¹æœã‚’å‘¼ã¶ã€å‡¦ç†ã¯ ItemEffectDispatcher ãŒæ‹…å½“ã™ã‚‹ã®ã§ã€
+// ã“ã“ã§ã¯è¿½åŠ /å‰Šé™¤ã¨ã€å¤‰æ›´é€šçŸ¥ã ã‘ã‚’è¡Œã†ã€‚
 public class PlayerInventory : MonoBehaviour
 {
-    [SerializeField] BuffItemContext context;
-
     [SerializeField] ItemData testdata;
 
-    // ƒeƒXƒg‚ÅŠJn‚Étestdata‚ğƒCƒ“ƒxƒ“ƒgƒŠ‚É’Ç‰Á‚µ‚Ä‚İ‚é
+    public List<ItemData> Items { get; } = new List<ItemData>();
+
     private void Start()
     {
-        //AddItem(testdata);
+        // ãƒ†ã‚¹ãƒˆã§é–‹å§‹æ™‚ã«testdataã‚’ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã«è¿½åŠ ã—ã¦ã¿ã‚‹
+        AddItem(testdata);
     }
 
-    // ItemDataƒNƒ‰ƒX‚ğ‚Ä‚éƒCƒ“ƒxƒ“ƒgƒŠ‚Æ‚¢‚¤ƒŠƒXƒg‚ÌƒNƒ‰ƒX
-
-    public List<ItemData> inventory = new List<ItemData>();
-
-    // ƒAƒCƒeƒ€‚ğƒCƒ“ƒxƒ“ƒgƒŠ‚É’Ç‰Á‚·‚éƒƒ\ƒbƒh
     public void AddItem(ItemData item)
     {
-        inventory.Add(item);
+        Items.Add(item);
         ItemTriggerEvents.OnInventoryChanged?.Invoke();
     }
 
-    // ƒAƒCƒeƒ€‚ğƒCƒ“ƒxƒ“ƒgƒŠ‚©‚çíœ‚·‚éƒƒ\ƒbƒh
     public void RemoveItem(ItemData item)
     {
-        if (inventory.Contains(item))
+        if (Items.Contains(item))
         {
-            inventory.Remove(item);
+            Items.Remove(item);
             ItemTriggerEvents.OnInventoryChanged?.Invoke();
         }
-    }
-
-
-
-    void OnInventoryChanged()
-    {
-        {
-            foreach (ItemData invItem in inventory)
-            {
-                invItem.effect?.OnInventoryChanged(context);
-            }
-        }
-    }
-
-    void OnMedalShot()
-    {
-        foreach (ItemData item in inventory)
-        {
-            if (item.effect != null)
-            {
-                item.effect.OnMedalShot(context); // ƒvƒŒƒCƒ„[‚ÉŒø‰Ê‚ğ“K—p
-            }
-            else
-            {
-            }
-        }
-    }
-
-    void OnMedalLanded(GameObject medal)
-    {
-        foreach (ItemData item in inventory)
-        {
-            item.effect?.OnMedalLanded(context, medal);
-        }
-    }
-
-    void OnMedalLost()
-    {
-        foreach (ItemData item in inventory)
-        {
-            if (item.effect != null)
-            {
-                item.effect.OnMedalLost(context); // ƒvƒŒƒCƒ„[‚ÉŒø‰Ê‚ğ“K—p
-            }
-            else
-            {
-            }
-        }
-    }
-
-    void OnRoundStart()
-    {
-        foreach (ItemData item in inventory)
-        {
-            if (item.effect != null)
-            {
-                item.effect.OnRoundStart(context); // ƒvƒŒƒCƒ„[‚ÉŒø‰Ê‚ğ“K—p
-            }
-            else
-            {
-            }
-        }
-    }
-
-    void OnRoundEnd()
-    {
-        foreach (ItemData item in inventory)
-        {
-            if (item.effect != null)
-            {
-                item.effect.OnRoundEnd(context); // ƒvƒŒƒCƒ„[‚ÉŒø‰Ê‚ğ“K—p
-            }
-            else
-            {
-            }
-        }
-    }
-
-    void OnSlotRoll()
-    {
-        foreach (ItemData item in inventory)
-        {
-            if (item.effect != null)
-            {
-                item.effect.OnSlotRoll(context); // ƒvƒŒƒCƒ„[‚ÉŒø‰Ê‚ğ“K—p
-            }
-            else
-            {
-            }
-        }
-    }
-
-    void OnSlotWin()
-    {
-        foreach (ItemData item in inventory)
-        {
-            if (item.effect != null)
-            {
-                item.effect.OnSlotWin(context); // ƒvƒŒƒCƒ„[‚ÉŒø‰Ê‚ğ“K—p
-            }
-            else
-            {
-            }
-        }
-    }
-
-    private void OnConsumptionItem()
-    {
-        foreach (ItemData item in inventory)
-        {
-            if (item.effect != null)
-            {
-                item.effect.OnConsumptionItem(context); // ƒvƒŒƒCƒ„[‚ÉŒø‰Ê‚ğ“K—p
-            }
-            else
-            {
-            }
-        }
-    }
-
-    private void Update()
-    {
-        // ‚È‚ñ‚©ƒƒ_ƒ‹”­Ë‚ÌŠ‚ÉPlayerInventory‚ğ“ü‚ê‚ê‚È‚¢‚Ì‚Å‚±‚±‚Å¶ƒNƒŠƒbƒNŒŸ’m‚Å‘S‚Ä‚ÌƒAƒCƒeƒ€‚ÌOnMedalShot‚ğŒÄ‚Ño‚·
-        if (Input.GetMouseButtonDown(0))
-        {
-            ItemTriggerEvents.OnMedalShot?.Invoke();
-        }
-
-        // ƒeƒXƒg‚Å‰EƒNƒŠƒbƒN‚ÅOnConsumptionItem‚ğŒÄ‚Ño‚·
-        if (Input.GetMouseButtonDown(1))
-        {
-            ItemTriggerEvents.OnConsumptionItem?.Invoke();
-        }
-    }
-
-    void OnEnable()
-    {
-        ItemTriggerEvents.OnInventoryChanged += OnInventoryChanged;
-        ItemTriggerEvents.OnMedalShot += OnMedalShot;
-        ItemTriggerEvents.OnMedalLanded += OnMedalLanded;
-        ItemTriggerEvents.OnMedalLost += OnMedalLost;
-        ItemTriggerEvents.OnRoundStart += OnRoundStart;
-        ItemTriggerEvents.OnRoundEnd += OnRoundEnd;
-        ItemTriggerEvents.OnSlotRoll += OnSlotRoll;
-        ItemTriggerEvents.OnSlotWin += OnSlotWin;
-        ItemTriggerEvents.OnConsumptionItem += OnConsumptionItem;
-    }
-
-    void OnDisable()
-    {
-        ItemTriggerEvents.OnInventoryChanged -= OnInventoryChanged;
-        ItemTriggerEvents.OnMedalShot -= OnMedalShot;
-        ItemTriggerEvents.OnMedalLanded -= OnMedalLanded;
-        ItemTriggerEvents.OnMedalLost -= OnMedalLost;
-        ItemTriggerEvents.OnRoundStart -= OnRoundStart;
-        ItemTriggerEvents.OnRoundEnd -= OnRoundEnd;
-        ItemTriggerEvents.OnSlotRoll -= OnSlotRoll;
-        ItemTriggerEvents.OnSlotWin -= OnSlotWin;
-        ItemTriggerEvents.OnConsumptionItem -= OnConsumptionItem;
     }
 }
