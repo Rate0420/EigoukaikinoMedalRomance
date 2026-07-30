@@ -16,6 +16,7 @@ namespace EMR.Core
         public GamePause GamePause { get; private set; }
 
 
+
         public bool IsInitialized { get; private set; }
 
         private void Awake()
