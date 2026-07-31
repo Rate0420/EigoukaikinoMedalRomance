@@ -3,28 +3,44 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Item")]
 public class ItemData : ScriptableObject
 {
-    // アイテムの種類
+    /// <summary>
+    /// アイテムの種類
+    /// </summary>
     public ItemType itemType;
 
-    // アイテム名
+    /// <summary>
+    /// アイテム名
+    /// </summary>
     public string itemName;
 
-    // 詳細画面などに表示する説明文
+    /// <summary>
+    /// 詳細画面などに表示する説明文
+    /// </summary>
     [TextArea(3, 5)]
     public string description;
 
-    // 購入に必要なメダル数
+    /// <summary>
+    /// 購入に必要なメダル数
+    /// </summary>
     public int[] cost;
 
-    // 詳細画面に表示するアイコン(Sprite)
+    /// <summary>
+    /// 詳細画面に表示するアイコン(Sprite)
+    /// </summary>
     public Sprite icon;
 
-    // 購入時にInventoryへ追加し、ゲーム中に効果を発揮する
+    /// <summary>
+    /// 購入時にInventoryへ追加し、ゲーム中に効果を発揮する
+    /// </summary>
     public ItemEffect effect;
 
-    // 消費アイテムかどうか
+    /// <summary>
+    /// 消費アイテムかどうか
+    /// </summary>
     public bool isConsumable;
 
-    // アイテムレベル
+    /// <summary>
+    /// アイテムレベル
+    /// </summary>
     public int level;
 }

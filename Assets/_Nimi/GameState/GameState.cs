@@ -1,50 +1,67 @@
+using System;
 using UnityEngine;
 using EMR.Medal;
+using EMR.Round;
 
 namespace EMR.Core
 {
     public class GameState : MonoBehaviour
     {
-        /// <summary>
-        /// インスタンス
-        /// </summary>
         public static GameState Instance { get; private set; }
 
-        /// <summary>
-        /// 所有するメダルの情報を取得します。
-        /// </summary>
         public MedalsOwnedModel OwnedModel { get; private set; }
-
-        /// <summary>
-        /// メダルの払い戻しの通知システム
-        /// </summary>
         public MedalRefundNotifier RefundNotifier { get; private set; }
-
-        /// <summary>
-        /// ポーズ管理用システム
-        /// </summary>
+        public RoundManager RoundManager { get; private set; }
+        public RoundProgressService RoundService { get; private set; }
         public GamePause GamePause { get; private set; }
 
 
+
+        public bool IsInitialized { get; private set; }
+
         private void Awake()
         {
-            // 既にインスタンスが存在する場合は、このオブジェクトを破棄します。
-            if (Instance != null)
+            if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
 
+            Initialize();
             Instance = this;
             DontDestroyOnLoad(gameObject);
+        }
 
+        /// <summary>
+        /// ゲーム全体のサービスを初期化する。
+        /// Bootstrapper から一度だけ呼ぶ。
+        /// </summary>
+        public void Initialize()
+        {
+            if (IsInitialized)
+            {
+                throw new InvalidOperationException(
+                    "GameState はすでに初期化されています。");
+            }
 
             OwnedModel = new MedalsOwnedModel(30);
             RefundNotifier = new MedalRefundNotifier();
+            RoundManager = new RoundManager(startRound: 1);
+            RoundService = new RoundProgressService(RoundManager);
+
             GamePause = new GamePause();
 
-            // 必要ならセーブデータから読み込み
-            // OwnedModel.SetCount(SaveData.LoadMedalCount());
+            IsInitialized = true;
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance != this)
+            {
+                return;
+            }
+
+            Instance = null;
         }
     }
 }

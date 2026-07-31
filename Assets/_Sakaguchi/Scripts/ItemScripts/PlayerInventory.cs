@@ -16,12 +16,20 @@ public class PlayerInventory : MonoBehaviour
         AddItem(testdata);
     }
 
+    /// <summary>
+    /// 指定したアイテムを追加する
+    /// </summary>
+    /// <param name="item"></param>
     public void AddItem(ItemData item)
     {
         Items.Add(item);
         ItemTriggerEvents.OnInventoryChanged?.Invoke();
     }
 
+    /// <summary>
+    ///  指定したアイテムを削除する
+    /// </summary>
+    /// <param name="item"></param>
     public void RemoveItem(ItemData item)
     {
         if (Items.Contains(item))

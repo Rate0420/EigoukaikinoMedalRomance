@@ -1,28 +1,58 @@
 using UnityEngine;
 
-// アイテムの効果を定義する抽象クラス
+/// <summary>
+/// アイテムの効果を定義する抽象クラス
+/// </summary>
 public abstract class ItemEffect : ScriptableObject
 {
-    // インベントリの内容が変わった時
+    /// <summary>
+    /// インベントリの内容が変わった時
+    /// </summary>
+    /// <param name="context"></param>
     public virtual void OnInventoryChanged(ItemEffectContext context) { }
 
-    // メダルを発射した時
+    /// <summary>
+    /// メダルを発射した時
+    /// </summary>
+    /// <param name="context"></param>
     public virtual void OnMedalShot(ItemEffectContext context) { }
-    // メダルが着地した時
+    /// <summary>
+    /// メダルが着地した時
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="medal"></param>
     public virtual void OnMedalLanded(ItemEffectContext context, GameObject medal) { }
-    // メダルが横穴に落ちたとき
+    /// <summary>
+    /// メダルが横穴に落ちたとき
+    /// </summary>
+    /// <param name="context"></param>
     public virtual void OnMedalLost(ItemEffectContext context) { }
 
-    // ラウンドがスタート時
+    /// <summary>
+    /// ラウンドがスタート時
+    /// </summary>
+    /// <param name="context"></param>
     public virtual void OnRoundStart(ItemEffectContext context) { }
-    // ラウンドが終わった時
+    /// <summary>
+    /// ラウンドが終わった時
+    /// </summary>
+    /// <param name="context"></param>
     public virtual void OnRoundEnd(ItemEffectContext context) { }
 
-    // スロットが回った時
+    /// <summary>
+    /// スロットが回った時
+    /// </summary>
+    /// <param name="context"></param>
     public virtual void OnSlotRoll(ItemEffectContext context) { }
-    // スロットで当たった際
+    /// <summary>
+    /// スロットで当たった際
+    /// </summary>
+    /// <param name="context"></param>
     public virtual void OnSlotWin(ItemEffectContext context) { }
 
-    // 消費アイテム用トリガー
+    /// <summary>
+    /// 消費アイテム用トリガー
+    /// </summary>
+    /// <param name="context"></param>
     public virtual void OnConsumptionItem(ItemEffectContext context) { }
 }

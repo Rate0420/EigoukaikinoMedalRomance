@@ -1,18 +1,53 @@
 using UnityEngine;
+using System;
 
+/// <summary>
+/// 
+/// </summary>
 public static class ItemTriggerEvents
 {
-    public static System.Action OnInventoryChanged;
+    /// <summary>
+    /// インベントリに変更があった時に呼ばれるイベント
+    /// </summary>
+    public static Action OnInventoryChanged;
 
-    public static System.Action OnMedalShot;
-    public static System.Action<GameObject> OnMedalLanded;
-    public static System.Action OnMedalLost;
+    /// <summary>
+    /// メダル発射時に呼ばれるイベント
+    /// </summary>
+    public static Action OnMedalShot;
 
-    public static System.Action OnRoundStart;
-    public static System.Action OnRoundEnd;
+    /// <summary>
+    /// 
+    /// </summary>
+    public static Action<GameObject> OnMedalLanded;
 
-    public static System.Action OnSlotRoll;
-    public static System.Action OnSlotWin;
+    /// <summary>
+    /// 
+    /// </summary>
+    public static Action OnMedalLost;
 
-    public static System.Action OnConsumptionItem;
+    /// <summary>
+    /// ラウンド開始時に呼ばれるイベント
+    /// </summary>
+    public static Action OnRoundStart;
+
+    /// <summary>
+    /// ラウンド終了時に呼ばれるイベント
+    /// </summary>
+    public static Action OnRoundEnd;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static Action OnSlotRoll;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static Action OnSlotWin;
+
+    /// <summary>
+    /// 消費アイテム選択時
+    /// </summary>
+    public static Action OnConsumptionItem;
 }
